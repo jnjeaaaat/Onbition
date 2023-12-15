@@ -1,7 +1,8 @@
-package org.jnjeaaaat.onbition.service.impl;
+package org.jnjeaaaat.onbition.service.impl.auth;
 
 import lombok.RequiredArgsConstructor;
 import lombok.extern.slf4j.Slf4j;
+import org.jnjeaaaat.onbition.domain.dto.auth.UserDetailsImpl;
 import org.jnjeaaaat.onbition.domain.repository.UserRepository;
 import org.springframework.security.core.userdetails.UserDetails;
 import org.springframework.security.core.userdetails.UserDetailsService;
@@ -25,6 +26,7 @@ public class AuthServiceImpl implements UserDetailsService {
   @Override
   public UserDetails loadUserByUsername(String username) throws UsernameNotFoundException {
     log.info("[loadUserByEmail] email : {}", username);
-    return userRepository.getByUid(username);
+
+    return new UserDetailsImpl(userRepository.getByUid(username));
   }
 }

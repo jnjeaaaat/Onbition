@@ -28,7 +28,6 @@ public class UserDto {
   private String phone;     // 유저 핸드폰번호
   private String cardNum;   // 유저 카드번호
   private String accountNum;  // 유저 계좌번호
-  private boolean isDeleted;  // 유저 삭제 여부
   private List<String> roles; // 유저 권한
 
   private LocalDateTime createdAt;  // 유저 생성 일자
@@ -45,7 +44,6 @@ public class UserDto {
         .phone(user.getPhone()) // 유저 핸드폰 번호
         .cardNum(user.getCardNum()) // 유저 카드번호
         .accountNum(user.getAccountNum()) // 유저 계좌번호
-        .isDeleted(user.isDeleted())  // 유저 삭제 여부
         .roles(user.getRoles())   // 유저 권한 목록
 
         .createdAt(user.getCreatedAt())   // 유저 생성 일자

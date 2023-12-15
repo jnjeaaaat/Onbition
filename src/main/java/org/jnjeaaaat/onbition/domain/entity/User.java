@@ -2,13 +2,11 @@ package org.jnjeaaaat.onbition.domain.entity;
 
 import com.fasterxml.jackson.annotation.JsonProperty;
 import com.fasterxml.jackson.annotation.JsonProperty.Access;
+import com.vladmihalcea.hibernate.type.json.JsonType;
 import java.time.LocalDateTime;
 import java.util.ArrayList;
-import java.util.Collection;
 import java.util.List;
-import java.util.stream.Collectors;
 import javax.persistence.Column;
-import javax.persistence.Convert;
 import javax.persistence.Entity;
 import javax.persistence.GeneratedValue;
 import javax.persistence.GenerationType;
@@ -18,10 +16,8 @@ import lombok.Builder;
 import lombok.Getter;
 import lombok.NoArgsConstructor;
 import lombok.Setter;
-import org.jnjeaaaat.onbition.config.security.StringConverter;
-import org.springframework.security.core.GrantedAuthority;
-import org.springframework.security.core.authority.SimpleGrantedAuthority;
-import org.springframework.security.core.userdetails.UserDetails;
+import org.hibernate.annotations.Type;
+import org.hibernate.annotations.TypeDef;
 
 /**
  * SpringSecurity UserDetails 구현하는 User Entity
@@ -32,13 +28,18 @@ import org.springframework.security.core.userdetails.UserDetails;
 @AllArgsConstructor
 @Builder
 @Entity
-public class User extends BaseEntity implements UserDetails {
+@TypeDef(name = "json", typeClass = JsonType.class)
+/*
+ type name(식별자라고 이해하면됨) 을 "json"으로 지정
+ "json" -> JsonType.class 로 지정하라는 뜻.
+ */
+public class User extends BaseEntity {
 
   @Id
   @GeneratedValue(strategy = GenerationType.IDENTITY)
   private Long id;    // 유저 PK
 
-  @Column(unique = true)
+  @Column(nullable = false)
   private String uid; // 유저 id
 
   @JsonProperty(access = Access.WRITE_ONLY)
@@ -48,7 +49,7 @@ public class User extends BaseEntity implements UserDetails {
   @Column(nullable = false)
   private String profileImgUrl; // 유저 프로필사진 url
 
-  @Column(unique = true)
+  @Column(nullable = false)
   private String name;  // 유저 이름
 
   @Column(nullable = false)
@@ -61,72 +62,11 @@ public class User extends BaseEntity implements UserDetails {
   private String accountNum; // 유저 계좌번호
 
   @Column
-  private boolean isDeleted;  // 유저 삭제 여부
-
-  @Column
   private LocalDateTime deletedAt;  // 유저 삭제 일자
 
-  @Convert(converter = StringConverter.class)
+  @Type(type = "json") // TypeDef 를 통해 선언한 "json" Type 적용
+  @Column(columnDefinition = "json") // MySQL column 도 "json" 적용
   @Builder.Default
   private List<String> roles = new ArrayList<>(); // 유저 권한 리스트
 
-  /*
-   계정이 가지고 있는 권한 목록 리턴
-   */
-  @Override
-  public Collection<? extends GrantedAuthority> getAuthorities() {
-    return roles
-        .stream()
-        .map(SimpleGrantedAuthority::new)
-        .collect(Collectors.toList());
-  }
-
-
-  /*
-  계정의 이름을 리턴
-  일반적으로 아이디(이메일)를 리턴
-   */
-  @JsonProperty(access = Access.WRITE_ONLY)
-  @Override
-  public String getUsername() {
-    return this.uid;
-  }
-
-  /*
-  계정이 만료되었는지를 리턴
-  true는 만료되지 않았음을 의미
-   */
-  @JsonProperty(access = Access.WRITE_ONLY)
-  @Override
-  public boolean isAccountNonExpired() {
-    return true;
-  }
-
-  /*
-  계정이 잠겨있는지 리턴
-  true는 잠겨있지 않음을 의미
-   */
-  @JsonProperty(access = Access.WRITE_ONLY)
-  @Override
-  public boolean isAccountNonLocked() {
-    return true;
-  }
-
-  /*
-  비밀번호가 만료되었는지 리턴
-   */
-  @JsonProperty(access = Access.WRITE_ONLY)
-  @Override
-  public boolean isCredentialsNonExpired() {
-    return true;
-  }
-
-  /*
-  계정이 활성화되어 있는지 리턴
-   */
-  @JsonProperty(access = Access.WRITE_ONLY)
-  @Override
-  public boolean isEnabled() {
-    return true;
-  }
 }

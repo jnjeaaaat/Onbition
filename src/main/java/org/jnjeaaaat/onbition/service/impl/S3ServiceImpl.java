@@ -77,10 +77,10 @@ public class S3ServiceImpl implements FileService {
   public String getFileFolder(FileFolder fileFolder) {
     String folder = "";
     if(fileFolder == FileFolder.PROFILE_IMAGE) {
-      folder = s3Component.getProfile();
+      folder = s3Component.getFolder().getProfile();
 
     }else if(fileFolder ==FileFolder.PAINT_IMAGE){
-      folder = s3Component.getPaint();
+      folder = s3Component.getFolder().getPaint();
     }
     return folder;
   }

@@ -1,6 +1,6 @@
 package org.jnjeaaaat.onbition.service.impl;
 
-import static org.jnjeaaaat.onbition.domain.dto.base.BaseStatus.*;
+import static org.jnjeaaaat.onbition.domain.dto.base.BaseStatus.ALREADY_REGISTERED_USER;
 
 import java.util.Collections;
 import lombok.RequiredArgsConstructor;
@@ -40,9 +40,12 @@ public class SignServiceImpl implements SignService {
 
     log.info("[signUp] 회원가입 요청");
     // 이미 존재하는 유저일때
-    if (userRepository.findByUid(request.getUid()).isPresent()) {
+    if (userRepository.existsByUidAndDeletedAt(request.getUid(), null)) {
       throw new BaseException(ALREADY_REGISTERED_USER);
     }
+//    if (userRepository.findByUid(request.getUid()).isPresent()) {
+//      throw new BaseException(ALREADY_REGISTERED_USER);
+//    }
 
     // 파일 저장 후 url 가져오기
     String imageUrl = imageService.saveImage(image, FileFolder.PROFILE_IMAGE);
