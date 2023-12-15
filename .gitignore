@@ -35,3 +35,7 @@ out/
 
 ### VS Code ###
 .vscode/
+
+/src/main/resources/application-aws.yml
+/src/main/resources/application-mysql.yml
+/src/main/resources/application-secret.yml
