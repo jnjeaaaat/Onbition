@@ -21,4 +21,7 @@ public interface UserRepository extends JpaRepository<User, Long> {
   // uid 값으로 존재하는 유저인지 확인
   boolean existsByUidAndDeletedAt(String uid, LocalDateTime deletedAt);
 
+  // name 이 중복되는지 확인
+  boolean existsByNameAndDeletedAt(String name, LocalDateTime deletedAt);
+
 }
