@@ -43,9 +43,6 @@ public class SignServiceImpl implements SignService {
     if (userRepository.existsByUidAndDeletedAt(request.getUid(), null)) {
       throw new BaseException(ALREADY_REGISTERED_USER);
     }
-//    if (userRepository.findByUid(request.getUid()).isPresent()) {
-//      throw new BaseException(ALREADY_REGISTERED_USER);
-//    }
 
     // 파일 저장 후 url 가져오기
     String imageUrl = imageService.saveImage(image, FileFolder.PROFILE_IMAGE);
