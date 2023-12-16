@@ -35,6 +35,8 @@ out/
 
 ### VS Code ###
 .vscode/
+
+
 ### Example user template template
 ### Example user template
 
@@ -45,3 +47,8 @@ out
 gen
 
 /logs
+
+
+/src/main/resources/application-aws.yml
+/src/main/resources/application-mysql.yml
+/src/main/resources/application-secret.yml
