@@ -3,6 +3,7 @@ package org.jnjeaaaat.onbition.web;
 import static org.jnjeaaaat.onbition.domain.dto.base.BaseStatus.SUCCESS_SIGN_UP;
 
 import javax.servlet.http.HttpServletRequest;
+import javax.validation.Valid;
 import lombok.RequiredArgsConstructor;
 import lombok.extern.slf4j.Slf4j;
 import org.jnjeaaaat.onbition.domain.dto.base.BaseResponse;
@@ -37,7 +38,7 @@ public class SignController {
   // Multipart, RequestPart 에 Json 형태의 값을 받기 위해 MediaType 을 설정해줘야 한다.
   public BaseResponse<SignUpResponse> signUp(
       @RequestPart(value = "image") MultipartFile image, // MultipartFile 이미지 request
-      @RequestPart(value = "request") SignUpRequest request, // 나머지 유저 정보 request
+      @Valid @RequestPart(value = "request") SignUpRequest request, // 나머지 유저 정보 request
       HttpServletRequest httpServletRequest ) { // uri 을 받기 위한 servletRequest
 
     // 요청 uri log

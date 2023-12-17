@@ -4,6 +4,7 @@ import javax.validation.constraints.NotBlank;
 import lombok.AllArgsConstructor;
 import lombok.Getter;
 import lombok.NoArgsConstructor;
+import org.jnjeaaaat.onbition.config.annotation.Telephone;
 
 /**
  * 회원가입에 필요한 Request class
@@ -22,7 +23,7 @@ public class SignUpRequest {
   @NotBlank(message = "이름을 입력해주세요.")
   private String name;
 
-  @NotBlank(message = "핸드폰 번호를 입력해주세요.")
+  @Telephone
   private String phone;
 
 }
