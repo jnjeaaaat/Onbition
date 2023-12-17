@@ -58,4 +58,23 @@ public class GlobalExceptionHandler {
         );
   }
 
+  /*
+    RuntimeException Handler
+    BaseException 외의 exception 을 처리한다.
+     */
+  @ExceptionHandler(RuntimeException.class)
+  public ResponseEntity<BaseResponse> handleRuntimeException(
+      RuntimeException e, HttpServletRequest request) {
+
+    log.error("[RuntimeException] {} is occurred. uri:{}", e.getMessage(), request.getRequestURI());
+
+    return ResponseEntity
+        .badRequest()
+        .body(BaseResponse.fail(
+                HttpStatus.BAD_REQUEST,
+                e.getMessage()
+            )
+        );
+  }
+
 }

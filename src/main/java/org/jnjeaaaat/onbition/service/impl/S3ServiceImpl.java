@@ -46,7 +46,6 @@ public class S3ServiceImpl implements FileService {
               .withCannedAcl(CannedAccessControlList.PublicReadWrite)
       );
     } catch (IOException e) {
-      // todo: NEED custom exceptionHandler
       throw new IllegalArgumentException(
           String.format("파일 변환 중 에러가 발생하였습니다. (%s)", file.getOriginalFilename()));
     }
