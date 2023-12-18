@@ -9,8 +9,6 @@ import org.springframework.data.jpa.repository.config.EnableJpaAuditing;
 import org.springframework.data.jpa.repository.config.EnableJpaRepositories;
 
 @SpringBootApplication
-@EnableJpaRepositories
-@EnableJpaAuditing
 @EnableConfigurationProperties({S3Component.class, SmsUtil.class})
 public class OnbitionApplication {
 
