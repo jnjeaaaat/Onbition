@@ -18,6 +18,10 @@ public enum BaseStatus {
   // common
   SUCCESS(true, OK.value(), "성공했습니다."),
 
+  // sms
+  SUCCESS_SEND_TEXT(true, OK.value(), "문자를 전송하였습니다."),
+  SUCCESS_AUTH_TEXT(true, OK.value(), "문자인증을 완료하였습니다."),
+
   // user
   SUCCESS_SIGN_UP(true, OK.value(), "성공적으로 회원가입 되었습니다."),
 
@@ -27,6 +31,12 @@ public enum BaseStatus {
   // user
   ALREADY_REGISTERED_USER(false, BAD_REQUEST.value(), "이미 가입된 유저입니다."),
   DUPLICATED_USER_NAME(false, BAD_REQUEST.value(), "중복된 이름입니다."),
+
+  // sms auth
+  NEED_REPOST_PHONE_NUMBER(false, BAD_REQUEST.value(), "번호를 다시 입력해주세요."),
+  UN_MATCH_VERIFICATION_CODE(false, BAD_REQUEST.value(), "인증번호가 일치하지 않습니다."),
+  
+
   ;
 
   private boolean success;
