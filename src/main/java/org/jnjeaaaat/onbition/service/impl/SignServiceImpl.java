@@ -1,6 +1,7 @@
 package org.jnjeaaaat.onbition.service.impl;
 
 import static org.jnjeaaaat.onbition.domain.dto.base.BaseStatus.ALREADY_REGISTERED_USER;
+import static org.jnjeaaaat.onbition.domain.dto.base.BaseStatus.DUPLICATED_USER_NAME;
 
 import java.util.Collections;
 import lombok.RequiredArgsConstructor;
@@ -42,6 +43,10 @@ public class SignServiceImpl implements SignService {
     // 이미 존재하는 유저일때
     if (userRepository.existsByUidAndDeletedAt(request.getUid(), null)) {
       throw new BaseException(ALREADY_REGISTERED_USER);
+    }
+    // 유저 이름이 중복될때
+    if (userRepository.existsByNameAndDeletedAt(request.getName(), null)) {
+      throw new BaseException(DUPLICATED_USER_NAME);
     }
 
     // 파일 저장 후 url 가져오기
