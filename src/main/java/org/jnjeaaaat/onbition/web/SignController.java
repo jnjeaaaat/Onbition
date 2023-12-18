@@ -37,7 +37,7 @@ public class SignController {
       MediaType.MULTIPART_FORM_DATA_VALUE})
   // Multipart, RequestPart 에 Json 형태의 값을 받기 위해 MediaType 을 설정해줘야 한다.
   public BaseResponse<SignUpResponse> signUp(
-      @RequestPart(value = "image") MultipartFile image, // MultipartFile 이미지 request
+      @RequestPart(value = "image", required = false) MultipartFile image, // MultipartFile 이미지 request
       @Valid @RequestPart(value = "request") SignUpRequest request, // 나머지 유저 정보 request
       HttpServletRequest httpServletRequest ) { // uri 을 받기 위한 servletRequest
 

@@ -2,6 +2,7 @@ package org.jnjeaaaat.onbition.domain.dto.sign;
 
 import javax.validation.constraints.NotBlank;
 import lombok.AllArgsConstructor;
+import lombok.Builder;
 import lombok.Getter;
 import lombok.NoArgsConstructor;
 import org.jnjeaaaat.onbition.config.annotation.Telephone;
@@ -12,6 +13,7 @@ import org.jnjeaaaat.onbition.config.annotation.Telephone;
 @Getter
 @NoArgsConstructor
 @AllArgsConstructor
+@Builder
 public class SignUpRequest {
 
   @NotBlank(message = "아이디를 입력해주세요.")

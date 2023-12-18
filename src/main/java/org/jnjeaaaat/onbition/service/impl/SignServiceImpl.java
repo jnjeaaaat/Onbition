@@ -39,13 +39,13 @@ public class SignServiceImpl implements SignService {
   @Override
   public SignUpResponse signUp(MultipartFile image, SignUpRequest request) {
 
-    log.info("[signUp] 회원가입 요청");
+    log.info("[signUp] 회원가입 요청 - uid : {}", request.getUid());
     // 이미 존재하는 유저일때
-    if (userRepository.existsByUidAndDeletedAt(request.getUid(), null)) {
+    if (userRepository.existsByUidAndDeletedAtNull(request.getUid())) {
       throw new BaseException(ALREADY_REGISTERED_USER);
     }
     // 유저 이름이 중복될때
-    if (userRepository.existsByNameAndDeletedAt(request.getName(), null)) {
+    if (userRepository.existsByNameAndDeletedAtNull(request.getName())) {
       throw new BaseException(DUPLICATED_USER_NAME);
     }
 
