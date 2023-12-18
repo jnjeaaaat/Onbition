@@ -1,6 +1,5 @@
 package org.jnjeaaaat.onbition.domain.repository;
 
-import java.time.LocalDateTime;
 import java.util.Optional;
 import org.jnjeaaaat.onbition.domain.entity.User;
 import org.springframework.data.jpa.repository.JpaRepository;
@@ -19,9 +18,8 @@ public interface UserRepository extends JpaRepository<User, Long> {
   Optional<User> findByUid(String uid);
 
   // uid 값으로 존재하는 유저인지 확인
-  boolean existsByUidAndDeletedAt(String uid, LocalDateTime deletedAt);
+  boolean existsByUidAndDeletedAtNull(String uid);
 
   // name 이 중복되는지 확인
-  boolean existsByNameAndDeletedAt(String name, LocalDateTime deletedAt);
-
+  boolean existsByNameAndDeletedAtNull(String name);
 }

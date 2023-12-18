@@ -40,7 +40,7 @@ class SignControllerTest {
 
 
   @Test
-  @DisplayName("회원가입 성공")
+  @DisplayName("[controller] 회원가입 성공")
   void success_register() throws Exception {
     //given
     final String fileName = "testImage";
