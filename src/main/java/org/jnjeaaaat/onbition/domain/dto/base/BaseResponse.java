@@ -32,6 +32,18 @@ public class BaseResponse<T> {
         .build();
   }
 
+  /*
+  성공 케이스
+  결과값없이 성공 메세지만 반환
+   */
+  public static <T> BaseResponse<T> success(BaseStatus status) {
+    return BaseResponse.<T>builder()
+        .success(status.isSuccess())
+        .code(status.getCode())
+        .message(status.getMessage())
+        .build();
+  }
+
   // 실패 케이스 BaseException 을 처리함
   public static <T> BaseResponse<T> fail(BaseStatus status) {
     return BaseResponse.<T>builder()
