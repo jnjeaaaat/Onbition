@@ -9,7 +9,7 @@ import javax.validation.Constraint;
 /**
  * Telephone Validation 처리를 위한 Custom Annotation
  */
-@Target(ElementType.FIELD)
+@Target({ElementType.FIELD, ElementType.PARAMETER})
 @Retention(RetentionPolicy.RUNTIME)
 @Constraint(validatedBy = TelephoneValidator.class)
 public @interface Telephone {
