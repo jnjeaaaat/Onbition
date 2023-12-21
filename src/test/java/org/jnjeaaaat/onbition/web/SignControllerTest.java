@@ -14,7 +14,8 @@ import java.util.Arrays;
 import java.util.List;
 import org.jnjeaaaat.onbition.domain.dto.sign.SignUpRequest;
 import org.jnjeaaaat.onbition.domain.dto.sign.SignUpResponse;
-import org.jnjeaaaat.onbition.service.impl.SignServiceImpl;
+import org.jnjeaaaat.onbition.service.impl.auth.SignServiceImpl;
+import org.jnjeaaaat.onbition.util.JwtTokenUtil;
 import org.junit.jupiter.api.DisplayName;
 import org.junit.jupiter.api.Test;
 import org.springframework.beans.factory.annotation.Autowired;
@@ -31,6 +32,9 @@ class SignControllerTest {
 
   @MockBean
   SignServiceImpl signService;
+
+  @MockBean
+  JwtTokenUtil jwtTokenUtil;
 
   @Autowired
   MockMvc mockMvc;

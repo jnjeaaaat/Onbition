@@ -1,20 +1,29 @@
-package org.jnjeaaaat.onbition.service.impl;
+package org.jnjeaaaat.onbition.service.impl.auth;
 
 import static org.jnjeaaaat.onbition.domain.dto.base.BaseStatus.ALREADY_REGISTERED_USER;
 import static org.jnjeaaaat.onbition.domain.dto.base.BaseStatus.DUPLICATED_USER_NAME;
+import static org.jnjeaaaat.onbition.domain.dto.base.BaseStatus.NOT_FOUND_USER;
+import static org.jnjeaaaat.onbition.domain.dto.base.BaseStatus.UN_MATCH_PASSWORD;
 
 import java.util.Collections;
+import javax.servlet.http.HttpServletResponse;
 import lombok.RequiredArgsConstructor;
 import lombok.extern.slf4j.Slf4j;
 import org.jnjeaaaat.onbition.domain.dto.file.FileFolder;
+import org.jnjeaaaat.onbition.domain.dto.sign.SignInRequest;
+import org.jnjeaaaat.onbition.domain.dto.sign.SignInResponse;
 import org.jnjeaaaat.onbition.domain.dto.sign.SignUpRequest;
 import org.jnjeaaaat.onbition.domain.dto.sign.SignUpResponse;
 import org.jnjeaaaat.onbition.domain.dto.user.UserDto;
 import org.jnjeaaaat.onbition.domain.entity.User;
+import org.jnjeaaaat.onbition.domain.entity.token.AccessToken;
+import org.jnjeaaaat.onbition.domain.entity.token.RefreshToken;
 import org.jnjeaaaat.onbition.domain.repository.UserRepository;
 import org.jnjeaaaat.onbition.exception.BaseException;
 import org.jnjeaaaat.onbition.service.ImageService;
 import org.jnjeaaaat.onbition.service.SignService;
+import org.jnjeaaaat.onbition.service.TokenService;
+import org.jnjeaaaat.onbition.util.JwtTokenUtil;
 import org.springframework.security.crypto.password.PasswordEncoder;
 import org.springframework.stereotype.Service;
 import org.springframework.web.multipart.MultipartFile;
@@ -29,10 +38,12 @@ public class SignServiceImpl implements SignService {
 
   private final ImageService imageService;
   private final UserRepository userRepository;
+  private final TokenService tokenService;
   private final PasswordEncoder passwordEncoder;
+  private final JwtTokenUtil jwtTokenUtil;
 
   /*
-  1. 회원가입
+  [회원가입]
   Request: image 파일, uid, password, name, phone
   Response: user PK, profileImgUrl, uid, name, roles
    */
@@ -65,6 +76,44 @@ public class SignServiceImpl implements SignService {
             )
         )
     );
+  }
+
+  /*
+  [로그인]
+  Request: uid, password
+  Response: user PK, uid, role List, accessToken
+   */
+  @Override
+  public SignInResponse signIn(SignInRequest request, HttpServletResponse response) {
+    log.info("[signIn] 로그인 - uid : {}", request.getUid());
+
+    // user 정보 추출
+    User user = userRepository.findByUidAndDeletedAtNull(request.getUid())
+        .orElseThrow(() -> new BaseException(NOT_FOUND_USER));
+
+    log.info("[signIn] 패스워드 일치 여부 확인");
+    // 비밀번호 일치 여부 확인
+    if (!passwordEncoder.matches(request.getPassword(), user.getPassword())) {
+      throw new BaseException(UN_MATCH_PASSWORD);
+    }
+    log.info("[signIn] 패스워드 일치 여부 확인 완료");
+
+    // AccessToken 생성
+    AccessToken accessToken = jwtTokenUtil.createAccessToken(user);
+    // RefreshToken 생성
+    RefreshToken refreshToken = jwtTokenUtil.createRefreshToken(user);
+
+    // Header 에 accessToken 저장
+    jwtTokenUtil.setHeaderAccessToken(response, accessToken.getToken());
+
+    // accessToken, refreshToken Redis 에 저장
+    tokenService.saveTokenInfo(accessToken);
+    tokenService.saveTokenInfo(refreshToken);
+
+    return SignInResponse.from(
+        UserDto.from(user), accessToken.getToken()
+    );
+
   }
 
 }
