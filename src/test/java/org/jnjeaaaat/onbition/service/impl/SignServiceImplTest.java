@@ -20,6 +20,7 @@ import org.jnjeaaaat.onbition.domain.dto.user.UserDto;
 import org.jnjeaaaat.onbition.domain.entity.User;
 import org.jnjeaaaat.onbition.domain.repository.UserRepository;
 import org.jnjeaaaat.onbition.exception.BaseException;
+import org.jnjeaaaat.onbition.service.impl.auth.SignServiceImpl;
 import org.junit.jupiter.api.DisplayName;
 import org.junit.jupiter.api.Test;
 import org.junit.jupiter.api.extension.ExtendWith;
