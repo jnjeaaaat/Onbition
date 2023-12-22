@@ -1,5 +1,6 @@
 package org.jnjeaaaat.onbition.config.security;
 
+import com.fasterxml.jackson.databind.ObjectMapper;
 import lombok.RequiredArgsConstructor;
 import lombok.extern.slf4j.Slf4j;
 import org.jnjeaaaat.onbition.config.filter.CustomAccessDeniedHandler;
@@ -27,6 +28,7 @@ public class SecurityConfig extends WebSecurityConfigurerAdapter {
   private final AccessTokenRepository accessTokenRepository;
   private final RefreshTokenRepository refreshTokenRepository;
   private final UserRepository userRepository;
+  private final ObjectMapper objectMapper;
 
   @Override
   protected void configure(HttpSecurity httpSecurity) throws Exception {
@@ -53,10 +55,10 @@ public class SecurityConfig extends WebSecurityConfigurerAdapter {
 
         .and()
         // 유저 권한 예외처리
-        .exceptionHandling().accessDeniedHandler(new CustomAccessDeniedHandler())
+        .exceptionHandling().accessDeniedHandler(new CustomAccessDeniedHandler(objectMapper))
         .and()
         // 토큰값에 대한 예외처리
-        .exceptionHandling().authenticationEntryPoint(new CustomAuthenticationEntryPoint())
+        .exceptionHandling().authenticationEntryPoint(new CustomAuthenticationEntryPoint(objectMapper))
 
         .and()
         .addFilterBefore(
