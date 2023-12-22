@@ -2,13 +2,19 @@ package org.jnjeaaaat.onbition.service.impl.auth;
 
 import static org.jnjeaaaat.onbition.domain.dto.base.BaseStatus.ALREADY_REGISTERED_USER;
 import static org.jnjeaaaat.onbition.domain.dto.base.BaseStatus.DUPLICATED_USER_NAME;
+import static org.jnjeaaaat.onbition.domain.dto.base.BaseStatus.INVALID_TOKEN;
+import static org.jnjeaaaat.onbition.domain.dto.base.BaseStatus.NOT_FOUND_TOKEN;
 import static org.jnjeaaaat.onbition.domain.dto.base.BaseStatus.NOT_FOUND_USER;
+import static org.jnjeaaaat.onbition.domain.dto.base.BaseStatus.REFRESH_TOKEN_EXPIRED_TOKEN;
 import static org.jnjeaaaat.onbition.domain.dto.base.BaseStatus.UN_MATCH_PASSWORD;
 
+import io.jsonwebtoken.ExpiredJwtException;
 import java.util.Collections;
+import javax.servlet.http.HttpServletRequest;
 import javax.servlet.http.HttpServletResponse;
 import lombok.RequiredArgsConstructor;
 import lombok.extern.slf4j.Slf4j;
+import org.jnjeaaaat.onbition.domain.dto.auth.ReissueResponse;
 import org.jnjeaaaat.onbition.domain.dto.file.FileFolder;
 import org.jnjeaaaat.onbition.domain.dto.sign.SignInRequest;
 import org.jnjeaaaat.onbition.domain.dto.sign.SignInResponse;
@@ -16,8 +22,8 @@ import org.jnjeaaaat.onbition.domain.dto.sign.SignUpRequest;
 import org.jnjeaaaat.onbition.domain.dto.sign.SignUpResponse;
 import org.jnjeaaaat.onbition.domain.dto.user.UserDto;
 import org.jnjeaaaat.onbition.domain.entity.User;
-import org.jnjeaaaat.onbition.domain.entity.token.AccessToken;
-import org.jnjeaaaat.onbition.domain.entity.token.RefreshToken;
+import org.jnjeaaaat.onbition.domain.entity.token.Token;
+import org.jnjeaaaat.onbition.domain.repository.TokenRepository;
 import org.jnjeaaaat.onbition.domain.repository.UserRepository;
 import org.jnjeaaaat.onbition.exception.BaseException;
 import org.jnjeaaaat.onbition.service.ImageService;
@@ -26,6 +32,7 @@ import org.jnjeaaaat.onbition.service.TokenService;
 import org.jnjeaaaat.onbition.util.JwtTokenUtil;
 import org.springframework.security.crypto.password.PasswordEncoder;
 import org.springframework.stereotype.Service;
+import org.springframework.transaction.annotation.Transactional;
 import org.springframework.web.multipart.MultipartFile;
 
 /**
@@ -39,6 +46,7 @@ public class SignServiceImpl implements SignService {
   private final ImageService imageService;
   private final UserRepository userRepository;
   private final TokenService tokenService;
+  private final TokenRepository tokenRepository;
   private final PasswordEncoder passwordEncoder;
   private final JwtTokenUtil jwtTokenUtil;
 
@@ -98,22 +106,63 @@ public class SignServiceImpl implements SignService {
     }
     log.info("[signIn] 패스워드 일치 여부 확인 완료");
 
-    // AccessToken 생성
-    AccessToken accessToken = jwtTokenUtil.createAccessToken(user);
-    // RefreshToken 생성
-    RefreshToken refreshToken = jwtTokenUtil.createRefreshToken(user);
-
-    // Header 에 accessToken 저장
-    jwtTokenUtil.setHeaderAccessToken(response, accessToken.getToken());
+    String accessToken = jwtTokenUtil.createAccessToken(user);
+    String refreshToken = jwtTokenUtil.createRefreshToken(user);
+    // Token 생성
+    Token token = Token.builder()
+        .uid(user.getUid())
+        .refreshToken(refreshToken)
+        .accessToken(accessToken)
+        .build();
 
     // accessToken, refreshToken Redis 에 저장
-    tokenService.saveTokenInfo(accessToken);
-    tokenService.saveTokenInfo(refreshToken);
+    tokenService.saveTokenInfo(token);
 
     return SignInResponse.from(
-        UserDto.from(user), accessToken.getToken()
+        UserDto.from(user), token
     );
 
+  }
+
+  /*
+  [토큰 재발급]
+  Request: HttpServletRequest
+   */
+  @Override
+  @Transactional
+  public ReissueResponse reissueToken(HttpServletRequest request) {
+    log.info("[reissueToken] 토큰 재발급 시작");
+
+    // accessToken 으로 Redis 에 저장되어있는 Token 정보 추출
+    Token token = tokenRepository
+        .findByAccessToken(jwtTokenUtil.resolveToken(request))
+        .orElseThrow(() -> new BaseException(NOT_FOUND_TOKEN));
+
+    // refreshToken
+    String refreshToken = token.getRefreshToken();
+
+    // refreshToken verify check
+    if (refreshToken == null || !refreshToken.equals(request.getHeader("refreshToken"))) {
+      throw new BaseException(INVALID_TOKEN);
+    }
+    // refreshToken 이 만료되었을때
+    try {
+      jwtTokenUtil.validateToken(refreshToken);
+    } catch (ExpiredJwtException e) {
+      throw new BaseException(REFRESH_TOKEN_EXPIRED_TOKEN);
+    }
+
+    User user = userRepository.findByUid(token.getUid())
+        .orElseThrow(() -> new BaseException(NOT_FOUND_USER));
+
+    // 새로운 accessToken 생성
+    String newAccessToken = jwtTokenUtil.createAccessToken(user);
+
+    // 새로운 accessToken 으로 교체
+    token.setAccessToken(newAccessToken);
+    tokenService.saveTokenInfo(token);
+
+    return ReissueResponse.from(token);
   }
 
 }

@@ -1,17 +1,15 @@
 package org.jnjeaaaat.onbition.config.filter;
 
-import static org.jnjeaaaat.onbition.domain.dto.base.BaseStatus.EXPIRED_TOKEN;
+import static org.jnjeaaaat.onbition.domain.dto.base.BaseStatus.ACCESS_TOKEN_EXPIRED_TOKEN;
 import static org.jnjeaaaat.onbition.domain.dto.base.BaseStatus.INVALID_TOKEN;
 
 import com.fasterxml.jackson.databind.ObjectMapper;
 import java.io.IOException;
-import java.util.Map;
 import javax.servlet.http.HttpServletRequest;
 import javax.servlet.http.HttpServletResponse;
 import lombok.RequiredArgsConstructor;
 import lombok.extern.slf4j.Slf4j;
 import org.jnjeaaaat.onbition.config.filter.dto.EntryPointErrorResponse;
-import org.jnjeaaaat.onbition.domain.dto.base.BaseStatus;
 import org.springframework.security.core.AuthenticationException;
 import org.springframework.security.web.AuthenticationEntryPoint;
 
@@ -36,9 +34,9 @@ public class CustomAuthenticationEntryPoint implements AuthenticationEntryPoint 
     // responseForm에 저장
     EntryPointErrorResponse entryPointErrorResponse = new EntryPointErrorResponse();
 
-    if (exception == EXPIRED_TOKEN) {
+    if (exception == ACCESS_TOKEN_EXPIRED_TOKEN) {
       log.info("[commence] 토큰 만료 에러 발생");
-      entryPointErrorResponse = new EntryPointErrorResponse(EXPIRED_TOKEN);
+      entryPointErrorResponse = new EntryPointErrorResponse(ACCESS_TOKEN_EXPIRED_TOKEN);
     } else if (exception == INVALID_TOKEN) {
       log.info("[commence] 유효하지 않는 토큰 에러 발생");
       entryPointErrorResponse = new EntryPointErrorResponse(INVALID_TOKEN);

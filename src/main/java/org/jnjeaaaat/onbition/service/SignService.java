@@ -1,6 +1,8 @@
 package org.jnjeaaaat.onbition.service;
 
+import javax.servlet.http.HttpServletRequest;
 import javax.servlet.http.HttpServletResponse;
+import org.jnjeaaaat.onbition.domain.dto.auth.ReissueResponse;
 import org.jnjeaaaat.onbition.domain.dto.sign.SignInRequest;
 import org.jnjeaaaat.onbition.domain.dto.sign.SignInResponse;
 import org.jnjeaaaat.onbition.domain.dto.sign.SignUpRequest;
@@ -17,5 +19,8 @@ public interface SignService {
 
   // 로그인
   SignInResponse signIn(SignInRequest request, HttpServletResponse response);
+
+  // 토큰 재발급
+  ReissueResponse reissueToken(HttpServletRequest httpServletRequest);
 
 }

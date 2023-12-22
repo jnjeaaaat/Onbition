@@ -14,9 +14,6 @@ import javax.servlet.http.HttpServletResponse;
 import lombok.RequiredArgsConstructor;
 import lombok.extern.slf4j.Slf4j;
 import org.jnjeaaaat.onbition.domain.entity.User;
-import org.jnjeaaaat.onbition.domain.entity.token.AccessToken;
-import org.jnjeaaaat.onbition.domain.entity.token.RefreshToken;
-import org.jnjeaaaat.onbition.domain.repository.RefreshTokenRepository;
 import org.springframework.beans.factory.annotation.Value;
 import org.springframework.security.authentication.UsernamePasswordAuthenticationToken;
 import org.springframework.security.core.Authentication;
@@ -44,11 +41,11 @@ public class JwtTokenUtil {
   @Value("${jwt.token.header}")
   private String jwtHeader;
 
-  private final long atkExpiredTime = Duration.ofMinutes(30).toMillis(); // 만료기간 30분
-  private final long rtkExpiredTime = Duration.ofDays(14).toMillis(); // 만료기간 2주
+//  private final long atkExpiredTime = Duration.ofMinutes(30).toMillis(); // 만료기간 30분
+//  private final long rtkExpiredTime = Duration.ofDays(14).toMillis(); // 만료기간 2주
 
-//  private final long atkExpiredTime = Duration.ofSeconds(10).toMillis(); // 만료 테스트용 10초
-//  private final long rtkExpiredTime = Duration.ofSeconds(20).toMillis(); // 만료 테스트용 20초
+  private final long atkExpiredTime = Duration.ofSeconds(10).toMillis(); // 만료 테스트용 10초
+  private final long rtkExpiredTime = Duration.ofSeconds(30).toMillis(); // 만료 테스트용 20초
 
 
   @PostConstruct
@@ -62,10 +59,23 @@ public class JwtTokenUtil {
   }
 
   /*
+  accessToken 생성
+   */
+  public String createAccessToken(User user) {
+    return createToken(user, atkExpiredTime);
+  }
+
+  /*
+  refreshToken 생성
+   */
+  public String createRefreshToken(User user) {
+    return createToken(user, rtkExpiredTime);
+  }
+  /*
   user info 값으로 accessToken 발행
   @return String
    */
-  public AccessToken createAccessToken(User user) {
+  private String createToken(User user, Long expiredTimeMs) {
     log.info("[createToken] 토큰 생성 시작");
     Claims claims = Jwts.claims()
         // uid 저장
@@ -79,48 +89,44 @@ public class JwtTokenUtil {
         .setClaims(claims)
         .setIssuedAt(now)      //  시작 시간 : 현재 시간기준으로 만들어짐
         .setExpiration(new Date(
-            System.currentTimeMillis() + atkExpiredTime))     // 끝나는 시간 : 지금 시간 + 유지할 시간(입력받아옴)
+            System.currentTimeMillis() + expiredTimeMs))     // 끝나는 시간 : 지금 시간 + 유지할 시간(입력받아옴)
         .signWith(SignatureAlgorithm.HS256, secretKey)
         .compact();
 
     log.info("[createToken] 토큰 생성 완료");
 
-    return AccessToken.builder()
-        .uid(user.getUid())
-        .token(token)
-        .expiredTime(atkExpiredTime)
-        .build();
+    return token;
   }
 
   /*
   user info 값으로 refreshToken 발행
   @return String
    */
-  public RefreshToken createRefreshToken(User user) {
-    log.info("[createToken] 토큰 생성 시작");
-    Claims claims = Jwts.claims()
-        // uid 저장
-        .setSubject(user.getUid());
-    claims.put("userId", user.getId());  // 일종의 map
-
-    Date now = new Date(System.currentTimeMillis());
-
-    String token = Jwts.builder()       // 토큰 생성
-        .setClaims(claims)
-        .setIssuedAt(now)      //  시작 시간 : 현재 시간기준으로 만들어짐
-        .setExpiration(new Date(
-            System.currentTimeMillis() + rtkExpiredTime))     // 끝나는 시간 : 지금 시간 + 유지할 시간(입력받아옴)
-        .signWith(SignatureAlgorithm.HS256, secretKey)
-        .compact();
-
-    log.info("[createToken] 토큰 생성 완료");
-
-    return RefreshToken.builder()
-        .uid(user.getUid())
-        .token(token)
-        .expiredTime(rtkExpiredTime)
-        .build();
-  }
+//  public RefreshToken createRefreshToken(User user) {
+//    log.info("[createToken] 토큰 생성 시작");
+//    Claims claims = Jwts.claims()
+//        // uid 저장
+//        .setSubject(user.getUid());
+//    claims.put("userId", user.getId());  // 일종의 map
+//
+//    Date now = new Date(System.currentTimeMillis());
+//
+//    String token = Jwts.builder()       // 토큰 생성
+//        .setClaims(claims)
+//        .setIssuedAt(now)      //  시작 시간 : 현재 시간기준으로 만들어짐
+//        .setExpiration(new Date(
+//            System.currentTimeMillis() + rtkExpiredTime))     // 끝나는 시간 : 지금 시간 + 유지할 시간(입력받아옴)
+//        .signWith(SignatureAlgorithm.HS256, secretKey)
+//        .compact();
+//
+//    log.info("[createToken] 토큰 생성 완료");
+//
+//    return RefreshToken.builder()
+//        .uid(user.getUid())
+//        .token(token)
+//        .expiredTime(rtkExpiredTime)
+//        .build();
+//  }
 
   /*
   토큰 인증 정보 조회

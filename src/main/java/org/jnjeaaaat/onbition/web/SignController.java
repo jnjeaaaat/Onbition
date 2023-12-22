@@ -1,6 +1,7 @@
 package org.jnjeaaaat.onbition.web;
 
 import static org.jnjeaaaat.onbition.domain.dto.base.BaseStatus.SUCCESS;
+import static org.jnjeaaaat.onbition.domain.dto.base.BaseStatus.SUCCESS_REISSUE_TOKEN;
 import static org.jnjeaaaat.onbition.domain.dto.base.BaseStatus.SUCCESS_SIGN_IN;
 import static org.jnjeaaaat.onbition.domain.dto.base.BaseStatus.SUCCESS_SIGN_UP;
 
@@ -9,6 +10,7 @@ import javax.servlet.http.HttpServletResponse;
 import javax.validation.Valid;
 import lombok.RequiredArgsConstructor;
 import lombok.extern.slf4j.Slf4j;
+import org.jnjeaaaat.onbition.domain.dto.auth.ReissueResponse;
 import org.jnjeaaaat.onbition.domain.dto.base.BaseResponse;
 import org.jnjeaaaat.onbition.domain.dto.sign.SignInRequest;
 import org.jnjeaaaat.onbition.domain.dto.sign.SignInResponse;
@@ -76,6 +78,23 @@ public class SignController {
         SUCCESS_SIGN_IN,
         signService.signIn(request, httpServletResponse)
     );
+  }
+
+  /*
+  [토큰 재발급]
+  Request: HttpServletRequest
+   */
+  @PostMapping("/re-token")
+  public BaseResponse<ReissueResponse> reissueToken(HttpServletRequest httpServletRequest) {
+
+    log.info("[reIssueToken] 토큰 재발급 요청");
+
+    return BaseResponse.success(
+        SUCCESS_REISSUE_TOKEN,
+        signService.reissueToken(httpServletRequest)
+    );
+
+
   }
 
   /*

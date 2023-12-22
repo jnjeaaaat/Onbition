@@ -6,9 +6,6 @@ import lombok.extern.slf4j.Slf4j;
 import org.jnjeaaaat.onbition.config.filter.CustomAccessDeniedHandler;
 import org.jnjeaaaat.onbition.config.filter.CustomAuthenticationEntryPoint;
 import org.jnjeaaaat.onbition.config.filter.JwtAuthenticationFilter;
-import org.jnjeaaaat.onbition.domain.repository.AccessTokenRepository;
-import org.jnjeaaaat.onbition.domain.repository.RefreshTokenRepository;
-import org.jnjeaaaat.onbition.domain.repository.UserRepository;
 import org.jnjeaaaat.onbition.util.JwtTokenUtil;
 import org.springframework.context.annotation.Configuration;
 import org.springframework.security.config.annotation.web.builders.HttpSecurity;
@@ -25,9 +22,6 @@ import org.springframework.security.web.authentication.UsernamePasswordAuthentic
 public class SecurityConfig extends WebSecurityConfigurerAdapter {
 
   private final JwtTokenUtil jwtTokenUtil;
-  private final AccessTokenRepository accessTokenRepository;
-  private final RefreshTokenRepository refreshTokenRepository;
-  private final UserRepository userRepository;
   private final ObjectMapper objectMapper;
 
   @Override
@@ -64,8 +58,7 @@ public class SecurityConfig extends WebSecurityConfigurerAdapter {
         .addFilterBefore(
             // uid, password, role 으로 유저 정보 처리 필터 전에
             // token 값에 대한 유효처리 필터부터 실행하라는 의미
-            new JwtAuthenticationFilter(jwtTokenUtil, accessTokenRepository, refreshTokenRepository,
-                userRepository),
+            new JwtAuthenticationFilter(jwtTokenUtil),
             UsernamePasswordAuthenticationFilter.class)
     ;
   }

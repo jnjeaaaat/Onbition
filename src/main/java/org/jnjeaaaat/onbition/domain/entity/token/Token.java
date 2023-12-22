@@ -8,28 +8,25 @@ import lombok.NoArgsConstructor;
 import lombok.Setter;
 import org.springframework.data.annotation.Id;
 import org.springframework.data.redis.core.RedisHash;
-import org.springframework.data.redis.core.TimeToLive;
 import org.springframework.data.redis.core.index.Indexed;
 
 /**
- * Redis 에서 관리할 RefreshToken Entity Class
+ * Redis 에서 관리할 AccessToken Entity Class
  */
 @Getter
 @Setter
 @NoArgsConstructor
 @AllArgsConstructor
 @Builder
-@RedisHash(value = "refToken")
-public class RefreshToken implements Serializable {
+@RedisHash(value = "jwtToken", timeToLive = 60*60*24*14)
+public class Token implements Serializable {
 
   @Id
-  @Indexed
-  private String uid;   // 유저 아이디
+  private String uid;  // 사용자 아이디
+
+  private String refreshToken; // refreshToken
 
   @Indexed
-  private String token;   // refreshToken
-
-  @TimeToLive
-  private Long expiredTime;   // 만료기간
+  private String accessToken;  // accessToken
 
 }
