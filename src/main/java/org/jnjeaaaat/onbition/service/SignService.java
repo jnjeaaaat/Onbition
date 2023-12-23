@@ -20,6 +20,9 @@ public interface SignService {
   // 로그인
   SignInResponse signIn(SignInRequest request, HttpServletResponse response);
 
+  // 로그아웃
+  void logout(HttpServletRequest request);
+
   // 토큰 재발급
   ReissueResponse reissueToken(HttpServletRequest httpServletRequest);
 

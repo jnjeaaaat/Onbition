@@ -28,6 +28,7 @@ public enum BaseStatus {
   SUCCESS_SIGN_UP(true, OK.value(), "성공적으로 회원가입 되었습니다."),
   SUCCESS_SIGN_IN(true, OK.value(), "로그인 되었습니다."),
   SUCCESS_REISSUE_TOKEN(true, OK.value(), "토큰이 재발급 되었습니다."),
+  SUCCESS_LOG_OUT(true, OK.value(), "로그아웃 되었습니다."),
 
 
 
@@ -43,13 +44,13 @@ public enum BaseStatus {
   UN_MATCH_VERIFICATION_CODE(false, BAD_REQUEST.value(), "인증번호가 일치하지 않습니다."),
 
 
-  // token
+  // auth
   ACCESS_TOKEN_EXPIRED_TOKEN(false, UNAUTHORIZED.value(), "만료된 토큰입니다. 재발급 요청해주세요."),
   REFRESH_TOKEN_EXPIRED_TOKEN(false, UNAUTHORIZED.value(), "다시 로그인해주세요"),
-  TOKEN_NOT_FOUND(false, UNAUTHORIZED.value(), "토큰을 찾을 수 없습니다."),
   NO_AUTHORITY(false, UNAUTHORIZED.value(), "권한이 없는 유저입니다."),
   NOT_FOUND_TOKEN(false, UNAUTHORIZED.value(), "토큰이 존재하지 않습니다."),
   INVALID_TOKEN(false, UNAUTHORIZED.value(), "유효하지 않는 토큰입니다."),
+  ALREADY_LOGOUT(false, UNAUTHORIZED.value(), "이미 로그아웃 상태입니다."),
   
 
   ;

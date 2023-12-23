@@ -1,6 +1,7 @@
 package org.jnjeaaaat.onbition.web;
 
 import static org.jnjeaaaat.onbition.domain.dto.base.BaseStatus.SUCCESS;
+import static org.jnjeaaaat.onbition.domain.dto.base.BaseStatus.SUCCESS_LOG_OUT;
 import static org.jnjeaaaat.onbition.domain.dto.base.BaseStatus.SUCCESS_REISSUE_TOKEN;
 import static org.jnjeaaaat.onbition.domain.dto.base.BaseStatus.SUCCESS_SIGN_IN;
 import static org.jnjeaaaat.onbition.domain.dto.base.BaseStatus.SUCCESS_SIGN_UP;
@@ -78,6 +79,18 @@ public class SignController {
         SUCCESS_SIGN_IN,
         signService.signIn(request, httpServletResponse)
     );
+  }
+
+  @PostMapping("/logout")
+  public BaseResponse logout(HttpServletRequest request) {
+
+    log.info("[logout] 로그아웃 요청");
+
+    signService.logout(request);
+    return BaseResponse.success(
+        SUCCESS_LOG_OUT
+    );
+
   }
 
   /*

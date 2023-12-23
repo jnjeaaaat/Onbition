@@ -1,8 +1,10 @@
 package org.jnjeaaaat.onbition.service.impl.auth;
 
 import lombok.RequiredArgsConstructor;
+import org.jnjeaaaat.onbition.domain.dto.base.BaseStatus;
 import org.jnjeaaaat.onbition.domain.entity.token.Token;
 import org.jnjeaaaat.onbition.domain.repository.TokenRepository;
+import org.jnjeaaaat.onbition.exception.BaseException;
 import org.jnjeaaaat.onbition.service.TokenService;
 import org.springframework.stereotype.Service;
 import org.springframework.transaction.annotation.Transactional;
@@ -25,7 +27,9 @@ public class TokenServiceImpl implements TokenService {
   @Override
   @Transactional
   public void removeRefreshToken(String token) {
-    tokenRepository.findByRefreshToken(token)
-        .ifPresent(tokenRepository::delete);
+    Token foundToken = tokenRepository.findByAccessToken(token)
+            .orElseThrow(() -> new BaseException(BaseStatus.NOT_FOUND_TOKEN));
+
+    tokenRepository.delete(foundToken);
   }
 }

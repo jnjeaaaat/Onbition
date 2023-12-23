@@ -11,6 +11,6 @@ public interface TokenService {
   void saveTokenInfo(Token token);
 
   // token 삭제
-  void removeRefreshToken(String token);
+  void removeRefreshToken(String uid);
 
 }

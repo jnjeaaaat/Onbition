@@ -1,5 +1,6 @@
 package org.jnjeaaaat.onbition.service.impl.auth;
 
+import static org.jnjeaaaat.onbition.domain.dto.base.BaseStatus.ALREADY_LOGOUT;
 import static org.jnjeaaaat.onbition.domain.dto.base.BaseStatus.ALREADY_REGISTERED_USER;
 import static org.jnjeaaaat.onbition.domain.dto.base.BaseStatus.DUPLICATED_USER_NAME;
 import static org.jnjeaaaat.onbition.domain.dto.base.BaseStatus.INVALID_TOKEN;
@@ -92,6 +93,7 @@ public class SignServiceImpl implements SignService {
   Response: user PK, uid, role List, accessToken
    */
   @Override
+  @Transactional
   public SignInResponse signIn(SignInRequest request, HttpServletResponse response) {
     log.info("[signIn] 로그인 - uid : {}", request.getUid());
 
@@ -113,6 +115,7 @@ public class SignServiceImpl implements SignService {
         .uid(user.getUid())
         .refreshToken(refreshToken)
         .accessToken(accessToken)
+        .expiredTime(jwtTokenUtil.getExpiration(refreshToken))
         .build();
 
     // accessToken, refreshToken Redis 에 저장
@@ -122,6 +125,33 @@ public class SignServiceImpl implements SignService {
         UserDto.from(user), token
     );
 
+  }
+
+  /*
+  [로그아웃]
+  Request: Header 의 accessToken
+   */
+  @Override
+  @Transactional
+  public void logout(HttpServletRequest request) {
+    log.info("[logout] 로그아웃");
+
+    // accessToken 추출
+    String accessToken = jwtTokenUtil.resolveToken(request);
+    // 토큰 남은 만료시간
+    Long expiredTime = jwtTokenUtil.getExpiration(accessToken);
+
+    Token token = tokenRepository.findByAccessToken(accessToken)
+        .orElseThrow(() -> new BaseException(NOT_FOUND_TOKEN));
+
+    // 이미 로그아웃 된 상태
+    if (token.getRefreshToken().equals("LOGOUT")) {
+      throw new BaseException(ALREADY_LOGOUT);
+    }
+
+    token.setRefreshToken("LOGOUT");
+    token.setExpiredTime(expiredTime);
+    tokenService.saveTokenInfo(token);
   }
 
   /*

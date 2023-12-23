@@ -10,7 +10,6 @@ import java.util.Base64;
 import java.util.Date;
 import javax.annotation.PostConstruct;
 import javax.servlet.http.HttpServletRequest;
-import javax.servlet.http.HttpServletResponse;
 import lombok.RequiredArgsConstructor;
 import lombok.extern.slf4j.Slf4j;
 import org.jnjeaaaat.onbition.domain.entity.User;
@@ -41,12 +40,8 @@ public class JwtTokenUtil {
   @Value("${jwt.token.header}")
   private String jwtHeader;
 
-//  private final long atkExpiredTime = Duration.ofMinutes(30).toMillis(); // 만료기간 30분
-//  private final long rtkExpiredTime = Duration.ofDays(14).toMillis(); // 만료기간 2주
-
-  private final long atkExpiredTime = Duration.ofSeconds(10).toMillis(); // 만료 테스트용 10초
-  private final long rtkExpiredTime = Duration.ofSeconds(30).toMillis(); // 만료 테스트용 20초
-
+  private final long atkExpiredTime = Duration.ofMinutes(30).toMillis(); // 만료기간 30분
+  private final long rtkExpiredTime = Duration.ofDays(14).toMillis(); // 만료기간 2주
 
   @PostConstruct
   protected void init() {
@@ -97,36 +92,6 @@ public class JwtTokenUtil {
 
     return token;
   }
-
-  /*
-  user info 값으로 refreshToken 발행
-  @return String
-   */
-//  public RefreshToken createRefreshToken(User user) {
-//    log.info("[createToken] 토큰 생성 시작");
-//    Claims claims = Jwts.claims()
-//        // uid 저장
-//        .setSubject(user.getUid());
-//    claims.put("userId", user.getId());  // 일종의 map
-//
-//    Date now = new Date(System.currentTimeMillis());
-//
-//    String token = Jwts.builder()       // 토큰 생성
-//        .setClaims(claims)
-//        .setIssuedAt(now)      //  시작 시간 : 현재 시간기준으로 만들어짐
-//        .setExpiration(new Date(
-//            System.currentTimeMillis() + rtkExpiredTime))     // 끝나는 시간 : 지금 시간 + 유지할 시간(입력받아옴)
-//        .signWith(SignatureAlgorithm.HS256, secretKey)
-//        .compact();
-//
-//    log.info("[createToken] 토큰 생성 완료");
-//
-//    return RefreshToken.builder()
-//        .uid(user.getUid())
-//        .token(token)
-//        .expiredTime(rtkExpiredTime)
-//        .build();
-//  }
 
   /*
   토큰 인증 정보 조회
@@ -200,10 +165,18 @@ public class JwtTokenUtil {
   }
 
   /*
-  responseHeader Token Header 에 토큰값 삽입
+  토큰의 남은 만료시간 추출
    */
-  public void setHeaderAccessToken(HttpServletResponse response, String accessToken) {
-    response.setHeader(jwtHeader, accessToken);
+  public Long getExpiration(String token) {
+    // accessToken 남은 유효시간
+    Date expiration = Jwts.parser()
+        .setSigningKey(secretKey)
+        .parseClaimsJws(token)
+        .getBody()
+        .getExpiration();
+    // 현재 시간
+    Long now = new Date().getTime();
+    return (expiration.getTime() - now);
   }
 
 }

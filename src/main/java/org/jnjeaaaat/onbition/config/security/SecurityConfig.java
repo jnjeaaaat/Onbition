@@ -40,6 +40,7 @@ public class SecurityConfig extends WebSecurityConfigurerAdapter {
         .authorizeRequests()
         .antMatchers("/**/sign-up").permitAll()
         .antMatchers("/**/sign-in").permitAll()
+        .antMatchers("/**/logout").hasAnyRole("VIEWER")
 
         /*
         hasRole, hasAnyRole 로 권한을 걸어줘야 exceptionHandling 에서 걸러내고

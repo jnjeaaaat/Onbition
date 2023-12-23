@@ -8,6 +8,7 @@ import lombok.NoArgsConstructor;
 import lombok.Setter;
 import org.springframework.data.annotation.Id;
 import org.springframework.data.redis.core.RedisHash;
+import org.springframework.data.redis.core.TimeToLive;
 import org.springframework.data.redis.core.index.Indexed;
 
 /**
@@ -18,7 +19,7 @@ import org.springframework.data.redis.core.index.Indexed;
 @NoArgsConstructor
 @AllArgsConstructor
 @Builder
-@RedisHash(value = "jwtToken", timeToLive = 60*60*24*14)
+@RedisHash(value = "jwtToken")
 public class Token implements Serializable {
 
   @Id
@@ -28,5 +29,8 @@ public class Token implements Serializable {
 
   @Indexed
   private String accessToken;  // accessToken
+
+  @TimeToLive
+  private Long expiredTime;
 
 }
