@@ -7,7 +7,6 @@ import static org.jnjeaaaat.onbition.domain.dto.base.BaseStatus.SUCCESS_SIGN_IN;
 import static org.jnjeaaaat.onbition.domain.dto.base.BaseStatus.SUCCESS_SIGN_UP;
 
 import javax.servlet.http.HttpServletRequest;
-import javax.servlet.http.HttpServletResponse;
 import javax.validation.Valid;
 import lombok.RequiredArgsConstructor;
 import lombok.extern.slf4j.Slf4j;
@@ -69,15 +68,14 @@ public class SignController {
   @PostMapping("/sign-in")
   public BaseResponse<SignInResponse> signIn(
       @Valid @RequestBody SignInRequest request,
-      HttpServletRequest httpServletRequest,
-      HttpServletResponse httpServletResponse) {
+      HttpServletRequest httpServletRequest) {
 
     // 요청 uri log
     log.info("[signIn] 로그인 요청 - uri : {}", httpServletRequest.getRequestURI());
 
     return BaseResponse.success(
         SUCCESS_SIGN_IN,
-        signService.signIn(request, httpServletResponse)
+        signService.signIn(request)
     );
   }
 

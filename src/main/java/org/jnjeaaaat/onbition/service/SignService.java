@@ -1,7 +1,6 @@
 package org.jnjeaaaat.onbition.service;
 
 import javax.servlet.http.HttpServletRequest;
-import javax.servlet.http.HttpServletResponse;
 import org.jnjeaaaat.onbition.domain.dto.auth.ReissueResponse;
 import org.jnjeaaaat.onbition.domain.dto.sign.SignInRequest;
 import org.jnjeaaaat.onbition.domain.dto.sign.SignInResponse;
@@ -18,7 +17,7 @@ public interface SignService {
   SignUpResponse signUp(MultipartFile image, SignUpRequest request);
 
   // 로그인
-  SignInResponse signIn(SignInRequest request, HttpServletResponse response);
+  SignInResponse signIn(SignInRequest request);
 
   // 로그아웃
   void logout(HttpServletRequest request);

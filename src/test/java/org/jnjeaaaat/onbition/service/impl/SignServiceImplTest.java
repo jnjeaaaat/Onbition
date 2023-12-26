@@ -3,6 +3,8 @@ package org.jnjeaaaat.onbition.service.impl;
 import static org.assertj.core.api.AssertionsForClassTypes.assertThat;
 import static org.jnjeaaaat.onbition.domain.dto.base.BaseStatus.ALREADY_REGISTERED_USER;
 import static org.jnjeaaaat.onbition.domain.dto.base.BaseStatus.DUPLICATED_USER_NAME;
+import static org.jnjeaaaat.onbition.domain.dto.base.BaseStatus.NOT_FOUND_USER;
+import static org.jnjeaaaat.onbition.domain.dto.base.BaseStatus.UN_MATCH_PASSWORD;
 import static org.junit.jupiter.api.Assertions.assertEquals;
 import static org.junit.jupiter.api.Assertions.assertThrows;
 import static org.junit.jupiter.api.Assertions.assertTrue;
@@ -14,13 +16,17 @@ import static org.mockito.Mockito.verify;
 
 import java.util.Arrays;
 import java.util.List;
+import java.util.Optional;
+import org.jnjeaaaat.onbition.domain.dto.sign.SignInRequest;
 import org.jnjeaaaat.onbition.domain.dto.sign.SignUpRequest;
 import org.jnjeaaaat.onbition.domain.dto.sign.SignUpResponse;
-import org.jnjeaaaat.onbition.domain.dto.user.UserDto;
 import org.jnjeaaaat.onbition.domain.entity.User;
+import org.jnjeaaaat.onbition.domain.repository.TokenRepository;
 import org.jnjeaaaat.onbition.domain.repository.UserRepository;
 import org.jnjeaaaat.onbition.exception.BaseException;
 import org.jnjeaaaat.onbition.service.impl.auth.SignServiceImpl;
+import org.jnjeaaaat.onbition.util.JwtTokenUtil;
+import org.jnjeaaaat.onbition.util.RedisUtil;
 import org.junit.jupiter.api.DisplayName;
 import org.junit.jupiter.api.Test;
 import org.junit.jupiter.api.extension.ExtendWith;
@@ -39,10 +45,16 @@ class SignServiceImplTest {
   private UserRepository userRepository;
 
   @Mock
+  private TokenRepository tokenRepository;
+
+  @Mock
   private ProfileImageServiceImpl imageService;
 
   @Mock
-  private UserDto userDto;
+  private JwtTokenUtil jwtTokenUtil;
+
+  @Mock
+  private RedisUtil redisUtil;
 
   @InjectMocks
   private SignServiceImpl signService;
@@ -150,6 +162,74 @@ class SignServiceImplTest {
         contentType,
         "<<data>>".getBytes()
     );
+  }
+
+  @Test
+  @DisplayName("[service] 토큰 생성 성공")
+  void success_create_token() {
+    //given
+    List<String> roleList = Arrays.asList("ROLE_VIEWER");
+    User user = User.builder()
+        .uid("testId")
+        .password(passwordEncoder.encode("password")) // 암호화된 비밀번호 저장
+        .profileImgUrl("https://onbition/jnjeaaaat/org")
+        .name("testName")
+        .roles(roleList)
+        .phone("010-1234-1334")
+        .build();
+
+    given(jwtTokenUtil.createAccessToken(any()))
+        .willReturn("testAccessToken");
+    given(jwtTokenUtil.createRefreshToken(any()))
+        .willReturn("testRefreshToken");
+
+    //when
+    String accessToken = jwtTokenUtil.createAccessToken(user);
+    String refreshToken = jwtTokenUtil.createRefreshToken(user);
+
+    //then
+    assertEquals("testAccessToken", accessToken);
+    assertEquals("testRefreshToken", refreshToken);
+  }
+
+  @Test
+  @DisplayName("로그인 실패 - 유저 정보 누락")
+  void failed_login_foundNotUser() {
+    //given
+    given(userRepository.findByUidAndDeletedAtNull(anyString()))
+        .willReturn(Optional.empty());
+    SignInRequest request = new SignInRequest("testId", "password");
+
+    //when
+    BaseException exception = assertThrows(BaseException.class,
+        () -> signService.signIn(request));
+
+    //then
+    assertEquals(NOT_FOUND_USER, exception.getStatus());
+  }
+
+  @Test
+  @DisplayName("로그인 실패 - 비밀번호 불일치")
+  void failed_login_password_un_match() {
+    //given
+    BCryptPasswordEncoder passwordEncoder = new BCryptPasswordEncoder();
+    SignInRequest request = new SignInRequest("testId", "wrongPassword");
+
+    given(userRepository.findByUidAndDeletedAtNull(anyString()))
+        .willReturn(Optional.of(User.builder()
+            .uid("testId")
+            .password(passwordEncoder.encode("password")) // 암호화된 비밀번호 저장
+            .profileImgUrl("https://onbition/jnjeaaaat/org")
+            .name("testName")
+            .phone("010-1234-1334")
+            .build()));
+
+    //when
+    BaseException exception = assertThrows(BaseException.class,
+        () -> signService.signIn(request));
+
+    //then
+    assertEquals(UN_MATCH_PASSWORD, exception.getStatus());
   }
 
 }

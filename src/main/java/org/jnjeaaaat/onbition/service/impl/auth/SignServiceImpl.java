@@ -12,7 +12,6 @@ import static org.jnjeaaaat.onbition.domain.dto.base.BaseStatus.UN_MATCH_PASSWOR
 import io.jsonwebtoken.ExpiredJwtException;
 import java.util.Collections;
 import javax.servlet.http.HttpServletRequest;
-import javax.servlet.http.HttpServletResponse;
 import lombok.RequiredArgsConstructor;
 import lombok.extern.slf4j.Slf4j;
 import org.jnjeaaaat.onbition.domain.dto.auth.ReissueResponse;
@@ -94,7 +93,7 @@ public class SignServiceImpl implements SignService {
    */
   @Override
   @Transactional
-  public SignInResponse signIn(SignInRequest request, HttpServletResponse response) {
+  public SignInResponse signIn(SignInRequest request) {
     log.info("[signIn] 로그인 - uid : {}", request.getUid());
 
     // user 정보 추출
@@ -164,8 +163,7 @@ public class SignServiceImpl implements SignService {
     log.info("[reissueToken] 토큰 재발급 시작");
 
     // accessToken 으로 Redis 에 저장되어있는 Token 정보 추출
-    Token token = tokenRepository
-        .findByAccessToken(jwtTokenUtil.resolveToken(request))
+    Token token = tokenRepository.findByAccessToken(jwtTokenUtil.resolveToken(request))
         .orElseThrow(() -> new BaseException(NOT_FOUND_TOKEN));
 
     // refreshToken
