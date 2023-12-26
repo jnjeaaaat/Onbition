@@ -4,6 +4,7 @@ import static org.mockito.ArgumentMatchers.any;
 import static org.mockito.BDDMockito.given;
 import static org.springframework.security.test.web.servlet.request.SecurityMockMvcRequestPostProcessors.csrf;
 import static org.springframework.test.web.servlet.request.MockMvcRequestBuilders.multipart;
+import static org.springframework.test.web.servlet.request.MockMvcRequestBuilders.post;
 import static org.springframework.test.web.servlet.result.MockMvcResultHandlers.print;
 import static org.springframework.test.web.servlet.result.MockMvcResultMatchers.jsonPath;
 import static org.springframework.test.web.servlet.result.MockMvcResultMatchers.status;
@@ -12,9 +13,13 @@ import com.fasterxml.jackson.databind.ObjectMapper;
 import java.nio.charset.StandardCharsets;
 import java.util.Arrays;
 import java.util.List;
+import org.jnjeaaaat.onbition.domain.dto.auth.ReissueResponse;
+import org.jnjeaaaat.onbition.domain.dto.sign.SignInRequest;
+import org.jnjeaaaat.onbition.domain.dto.sign.SignInResponse;
 import org.jnjeaaaat.onbition.domain.dto.sign.SignUpRequest;
 import org.jnjeaaaat.onbition.domain.dto.sign.SignUpResponse;
-import org.jnjeaaaat.onbition.service.impl.SignServiceImpl;
+import org.jnjeaaaat.onbition.service.impl.auth.SignServiceImpl;
+import org.jnjeaaaat.onbition.util.JwtTokenUtil;
 import org.junit.jupiter.api.DisplayName;
 import org.junit.jupiter.api.Test;
 import org.springframework.beans.factory.annotation.Autowired;
@@ -31,6 +36,9 @@ class SignControllerTest {
 
   @MockBean
   SignServiceImpl signService;
+
+  @MockBean
+  JwtTokenUtil jwtTokenUtil;
 
   @Autowired
   MockMvc mockMvc;
@@ -93,7 +101,52 @@ class SignControllerTest {
         .andExpect(jsonPath("$.result.profileImgUrl").value("https://onbition/jnjeaaaat/org"))
         .andExpect(status().isOk());
 
+  }
 
+  @Test
+  @DisplayName("[controller] 로그인 성공")
+  void success_signIn() throws Exception {
+    //given
+    List<String> roleList = Arrays.asList("ROLE_VIEWER");
+    given(signService.signIn(any()))
+        .willReturn(SignInResponse.builder()
+            .uid("testUid")
+            .roles(roleList)
+            .accessToken("testAccessToken")
+            .refreshToken("testRefreshToken")
+            .build());
+
+    //when
+    //then
+    mockMvc.perform(post("/api/v1/sign-in")
+            .contentType(MediaType.APPLICATION_JSON)
+            .content(objectMapper.writeValueAsString(
+                new SignInRequest("testUid", "password")
+            )))
+        .andExpect(jsonPath("$.result.uid").value("testUid"))
+        .andExpect(jsonPath("$.result.roles[0]").value("ROLE_VIEWER"))
+        .andExpect(jsonPath("$.result.accessToken").value("testAccessToken"))
+        .andExpect(jsonPath("$.result.refreshToken").value("testRefreshToken"))
+        .andExpect(status().isOk())
+        .andDo(print());
+  }
+
+  @Test
+  @DisplayName("[controller] 토큰 재발급 성공")
+  void reissue_token() throws Exception {
+    //given
+    given(signService.reissueToken(any()))
+        .willReturn(ReissueResponse.builder()
+            .accessToken("testNewAccessToken")
+            .build());
+    //when
+    //then
+    mockMvc.perform(post("/api/v1/re-token")
+        .header("X-AUTH-TOKEN", "testAccessToken")
+        .header("refreshToken", "testRefreshToken"))
+        .andExpect(jsonPath("$.result.accessToken").value("testNewAccessToken"))
+        .andExpect(status().isOk())
+        .andDo(print());
   }
 
 }

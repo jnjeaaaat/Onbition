@@ -71,7 +71,8 @@ public class GlobalExceptionHandler {
     return ResponseEntity
         .badRequest()
         .body(BaseResponse.fail(
-                HttpStatus.BAD_REQUEST,
+                // 예상치못한 오류 발생 INTERNAL_SERVER_ERROR 반환
+                HttpStatus.INTERNAL_SERVER_ERROR,
                 e.getMessage()
             )
         );

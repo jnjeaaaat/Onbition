@@ -17,6 +17,9 @@ public interface UserRepository extends JpaRepository<User, Long> {
   // uid 값으로 Optional 타입으로 get User Entity
   Optional<User> findByUid(String uid);
 
+  // uid 값으로 삭제되지 않은 User Entity
+  Optional<User> findByUidAndDeletedAtNull(String uid);
+
   // uid 값으로 존재하는 유저인지 확인
   boolean existsByUidAndDeletedAtNull(String uid);
 
