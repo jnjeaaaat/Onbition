@@ -1,6 +1,7 @@
 package org.jnjeaaaat.onbition.domain.dto.base;
 
 import static org.springframework.http.HttpStatus.BAD_REQUEST;
+import static org.springframework.http.HttpStatus.INTERNAL_SERVER_ERROR;
 import static org.springframework.http.HttpStatus.OK;
 import static org.springframework.http.HttpStatus.UNAUTHORIZED;
 
@@ -30,6 +31,9 @@ public enum BaseStatus {
   SUCCESS_REISSUE_TOKEN(true, OK.value(), "토큰이 재발급 되었습니다."),
   SUCCESS_LOG_OUT(true, OK.value(), "로그아웃 되었습니다."),
 
+  // user
+  SUCCESS_UPDATE_USER(true, OK.value(), "유저 정보가 변경되었습니다."),
+
 
 
   //////////////////////////////// failed response ////////////////////////////////
@@ -51,6 +55,12 @@ public enum BaseStatus {
   NOT_FOUND_TOKEN(false, UNAUTHORIZED.value(), "토큰이 존재하지 않습니다."),
   INVALID_TOKEN(false, UNAUTHORIZED.value(), "유효하지 않는 토큰입니다."),
   ALREADY_LOGOUT(false, UNAUTHORIZED.value(), "이미 로그아웃 상태입니다."),
+
+
+  // file
+  FILE_UPLOAD_ERROR(false, INTERNAL_SERVER_ERROR.value(), "파일 업로드에 실패하였습니다."),
+  FILE_DELETE_ERROR(false, INTERNAL_SERVER_ERROR.value(), "파일 삭제에 실패하였습니다."),
+  NOT_FOUND_FILE(false, INTERNAL_SERVER_ERROR.value(), "파일을 찾을 수 없습니다."),
   
 
   ;

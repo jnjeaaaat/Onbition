@@ -27,4 +27,13 @@ public class ProfileImageServiceImpl implements ImageService {
     return fileService.uploadFile(image, fileFolder);
   }
 
+  /*
+  [이미지 삭제]
+  file 경로값을 받아 해당 이미지(파일) 삭제
+   */
+  @Override
+  public void deleteImage(String filePath) {
+    fileService.deleteFile(filePath);
+  }
+
 }

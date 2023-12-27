@@ -11,4 +11,6 @@ public interface ImageService {
   // 이미지 저장
   String saveImage(MultipartFile file, FileFolder fileFolder);
 
+  // 이미지 삭제
+  void deleteImage(String filePath);
 }
