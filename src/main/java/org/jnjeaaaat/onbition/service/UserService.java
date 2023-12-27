@@ -1,6 +1,7 @@
 package org.jnjeaaaat.onbition.service;
 
 import org.jnjeaaaat.onbition.domain.dto.user.PasswordModifyRequest;
+import org.jnjeaaaat.onbition.domain.dto.user.ResetPasswordRequest;
 import org.jnjeaaaat.onbition.domain.dto.user.UserModifyRequest;
 import org.jnjeaaaat.onbition.domain.dto.user.UserModifyResponse;
 import org.springframework.web.multipart.MultipartFile;
@@ -15,4 +16,7 @@ public interface UserService {
 
   // 비밀번호 변경
   void updatePassword(Long userId, PasswordModifyRequest request);
+
+  // 비밀번호 리셋 다시설정
+  void resetPassword(ResetPasswordRequest request);
 }

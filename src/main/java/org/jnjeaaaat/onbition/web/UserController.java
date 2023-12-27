@@ -1,5 +1,6 @@
 package org.jnjeaaaat.onbition.web;
 
+import static org.jnjeaaaat.onbition.domain.dto.base.BaseStatus.SUCCESS_RESET_PASSWORD;
 import static org.jnjeaaaat.onbition.domain.dto.base.BaseStatus.SUCCESS_UPDATE_PASSWORD;
 import static org.jnjeaaaat.onbition.domain.dto.base.BaseStatus.SUCCESS_UPDATE_USER;
 
@@ -9,6 +10,7 @@ import lombok.RequiredArgsConstructor;
 import lombok.extern.slf4j.Slf4j;
 import org.jnjeaaaat.onbition.domain.dto.base.BaseResponse;
 import org.jnjeaaaat.onbition.domain.dto.user.PasswordModifyRequest;
+import org.jnjeaaaat.onbition.domain.dto.user.ResetPasswordRequest;
 import org.jnjeaaaat.onbition.domain.dto.user.UserModifyRequest;
 import org.jnjeaaaat.onbition.domain.dto.user.UserModifyResponse;
 import org.jnjeaaaat.onbition.service.UserService;
@@ -69,6 +71,23 @@ public class UserController {
     return BaseResponse.success(
         SUCCESS_UPDATE_PASSWORD
     );
+  }
+
+  /*
+  [비밀번호 초기화]
+  Request: 유저 id, 유저 핸드폰번호
+  Response: success message
+   */
+  @PutMapping("/pwd/reset")
+  public BaseResponse resetPassword(@Valid @RequestBody ResetPasswordRequest request) {
+
+    log.info("[resetPassword] 유저 비밀번호 초기화 요청");
+    userService.resetPassword(request);
+
+    return BaseResponse.success(
+        SUCCESS_RESET_PASSWORD
+    );
+
   }
 
 
