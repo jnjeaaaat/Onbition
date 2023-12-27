@@ -7,6 +7,9 @@ import lombok.Getter;
 import lombok.NoArgsConstructor;
 import lombok.Setter;
 
+/**
+ * 유저 정보 변경 Request class
+ */
 @Getter
 @Setter
 @NoArgsConstructor

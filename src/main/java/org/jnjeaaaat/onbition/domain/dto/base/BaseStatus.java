@@ -33,6 +33,7 @@ public enum BaseStatus {
 
   // user
   SUCCESS_UPDATE_USER(true, OK.value(), "유저 정보가 변경되었습니다."),
+  SUCCESS_UPDATE_PASSWORD(true, OK.value(), "비밀번호가 변경되었습니다."),
 
 
 
@@ -42,6 +43,7 @@ public enum BaseStatus {
   DUPLICATED_USER_NAME(false, BAD_REQUEST.value(), "중복된 이름입니다."),
   NOT_FOUND_USER(false, BAD_REQUEST.value(), "등록되지 않은 유저입니다."),
   UN_MATCH_PASSWORD(false, BAD_REQUEST.value(), "비밀번호가 일치하지 않습니다."),
+  SAME_PASSWORD(false, BAD_REQUEST.value(), "동일한 비밀번호로는 변경할 수 없습니다."),
 
   // sms auth
   NEED_REPOST_PHONE_NUMBER(false, BAD_REQUEST.value(), "번호를 다시 입력해주세요."),

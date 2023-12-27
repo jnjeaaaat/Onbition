@@ -3,11 +3,14 @@ package org.jnjeaaaat.onbition.service.impl.user;
 import static org.jnjeaaaat.onbition.domain.dto.base.BaseStatus.DUPLICATED_USER_NAME;
 import static org.jnjeaaaat.onbition.domain.dto.base.BaseStatus.NOT_FOUND_USER;
 import static org.jnjeaaaat.onbition.domain.dto.base.BaseStatus.NO_AUTHORITY;
+import static org.jnjeaaaat.onbition.domain.dto.base.BaseStatus.SAME_PASSWORD;
+import static org.jnjeaaaat.onbition.domain.dto.base.BaseStatus.UN_MATCH_PASSWORD;
 
 import java.util.Objects;
 import lombok.RequiredArgsConstructor;
 import lombok.extern.slf4j.Slf4j;
 import org.jnjeaaaat.onbition.domain.dto.file.FileFolder;
+import org.jnjeaaaat.onbition.domain.dto.user.PasswordModifyRequest;
 import org.jnjeaaaat.onbition.domain.dto.user.UserDto;
 import org.jnjeaaaat.onbition.domain.dto.user.UserModifyRequest;
 import org.jnjeaaaat.onbition.domain.dto.user.UserModifyResponse;
@@ -17,10 +20,14 @@ import org.jnjeaaaat.onbition.exception.BaseException;
 import org.jnjeaaaat.onbition.service.ImageService;
 import org.jnjeaaaat.onbition.service.UserService;
 import org.jnjeaaaat.onbition.util.JwtTokenUtil;
+import org.springframework.security.crypto.password.PasswordEncoder;
 import org.springframework.stereotype.Service;
 import org.springframework.transaction.annotation.Transactional;
 import org.springframework.web.multipart.MultipartFile;
 
+/**
+ * 유저 정보 변경, 비밀번호 변경, 조회 Interface 구현체 class
+ */
 @Slf4j
 @Service
 @RequiredArgsConstructor
@@ -29,11 +36,12 @@ public class UserServiceImpl implements UserService {
   private final ImageService imageService;
   private final UserRepository userRepository;
   private final JwtTokenUtil jwtTokenUtil;
+  private final PasswordEncoder passwordEncoder;
 
   /*
   [유저정보변경]
   Request: 유저 PK, MultipartFile 이미지, 유저 이름
-  Response: 유저 PK, 유저 id, 유저 이름, 유저 프로필사진, 유저 변경날짜
+  Response: 유저 PK, 유저 id, 유저 이름, 유저 프로필사진
    */
   @Override
   @Transactional
@@ -60,6 +68,36 @@ public class UserServiceImpl implements UserService {
     return UserModifyResponse.from(
         UserDto.from(user)
     );
+  }
+
+  /*
+  [비밀번호 변경]
+  Request: oldPassword, newPassword
+  Response: success message
+   */
+  @Override
+  @Transactional
+  public void updatePassword(Long userId, PasswordModifyRequest request) {
+    log.info("[updateUser] 유저 정보 변경 - 유저 id : {}", userId);
+    // 토큰 정보의 user 와 요청하는 userId 가 다를때
+    if (!Objects.equals(userId, jwtTokenUtil.getUserIdFromToken())) {
+      throw new BaseException(NO_AUTHORITY);
+    }
+
+    User user = userRepository.findById(userId)
+        .orElseThrow(() -> new BaseException(NOT_FOUND_USER));
+
+    // 비밀번호 다름
+    if (!passwordEncoder.matches(request.getPassword(), user.getPassword())) {
+      throw new BaseException(UN_MATCH_PASSWORD);
+    }
+    // 바꿀 비밀번호와 같으면
+    if (request.getPassword().equals(request.getNewPassword())) {
+      throw new BaseException(SAME_PASSWORD);
+    }
+
+    // 비밀번호 변경
+    user.setPassword(passwordEncoder.encode(request.getNewPassword()));
   }
 
   /*
