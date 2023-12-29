@@ -6,6 +6,7 @@ import static org.jnjeaaaat.onbition.domain.dto.base.BaseStatus.SUCCESS_REISSUE_
 import static org.jnjeaaaat.onbition.domain.dto.base.BaseStatus.SUCCESS_SIGN_IN;
 import static org.jnjeaaaat.onbition.domain.dto.base.BaseStatus.SUCCESS_SIGN_UP;
 
+import java.io.IOException;
 import javax.servlet.http.HttpServletRequest;
 import javax.validation.Valid;
 import lombok.RequiredArgsConstructor;
@@ -51,7 +52,7 @@ public class SignController {
       @RequestPart(value = "image", required = false) MultipartFile image,
       // MultipartFile 이미지 request
       @Valid @RequestPart(value = "request") SignUpRequest request, // 나머지 유저 정보 request
-      HttpServletRequest httpServletRequest) { // uri 을 받기 위한 servletRequest
+      HttpServletRequest httpServletRequest) throws IOException { // uri 을 받기 위한 servletRequest
 
     // 요청 uri log
     log.info("[signUp] 회원가입 요청 - uri : {}", httpServletRequest.getRequestURI());

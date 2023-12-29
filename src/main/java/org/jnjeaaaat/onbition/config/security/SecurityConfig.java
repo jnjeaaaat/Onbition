@@ -40,14 +40,16 @@ public class SecurityConfig extends WebSecurityConfigurerAdapter {
         .authorizeRequests()
         .antMatchers("/**/sign-up").permitAll()
         .antMatchers("/**/sign-in").permitAll()
-        .antMatchers("/**/logout").hasAnyRole("VIEWER")
+        .antMatchers("/**/re-token").permitAll()
+        .antMatchers("/**/reset").permitAll()
+        .antMatchers("/**/sms/**").permitAll()
+
+        .anyRequest().hasAnyRole("VIEWER")
 
         /*
         hasRole, hasAnyRole 로 권한을 걸어줘야 exceptionHandling 에서 걸러내고
         CustomAuthenticationEntryPoint 클래스에서 처리할 수 있음
          */
-        .antMatchers("/api/v1/test").hasAnyRole("VIEWER")
-
         .and()
         // 유저 권한 예외처리
         .exceptionHandling().accessDeniedHandler(new CustomAccessDeniedHandler(objectMapper))

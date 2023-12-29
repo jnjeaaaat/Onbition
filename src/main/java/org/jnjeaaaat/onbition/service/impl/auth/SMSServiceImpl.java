@@ -7,11 +7,11 @@ import java.util.Objects;
 import lombok.RequiredArgsConstructor;
 import lombok.extern.slf4j.Slf4j;
 import org.apache.commons.lang3.RandomStringUtils;
+import org.jnjeaaaat.onbition.config.client.SmsClient;
 import org.jnjeaaaat.onbition.domain.dto.auth.SendTextResponse;
 import org.jnjeaaaat.onbition.exception.BaseException;
 import org.jnjeaaaat.onbition.service.SMSService;
 import org.jnjeaaaat.onbition.util.RedisUtil;
-import org.jnjeaaaat.onbition.util.SmsUtil;
 import org.springframework.stereotype.Service;
 
 /**
@@ -22,7 +22,7 @@ import org.springframework.stereotype.Service;
 @RequiredArgsConstructor
 public class SMSServiceImpl implements SMSService {
 
-  private final SmsUtil smsUtil;
+  private final SmsClient smsClient;
   private final RedisUtil redisUtil;
 
   private final Long expireTimeMs = 60 * 3L; // 인증코드 유효기간
@@ -39,7 +39,7 @@ public class SMSServiceImpl implements SMSService {
 
     log.info("[sendMessage] 해당 번호로 문자 전송");
     // 문자인증을 위한 문자 전송
-    smsUtil.sendOne(phone, verificationCode);
+    smsClient.sendVerificationCode(phone, verificationCode);
     log.info("[sendMessage] 문자 전송 성공");
 
     log.info("[saveToRedis] Redis 서버에 인증코드 저장");

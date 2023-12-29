@@ -1,6 +1,7 @@
 package org.jnjeaaaat.onbition.service;
 
 import java.io.FileNotFoundException;
+import java.io.IOException;
 import org.jnjeaaaat.onbition.domain.dto.file.FileFolder;
 import org.springframework.web.multipart.MultipartFile;
 
@@ -10,7 +11,7 @@ import org.springframework.web.multipart.MultipartFile;
 public interface FileService {
 
   // 파일 업로드
-  String uploadFile(MultipartFile file, FileFolder fileFolder);
+  String uploadFile(MultipartFile file, FileFolder fileFolder) throws IOException;
 
   // 파일 삭제
   void deleteFile(String fileName);
