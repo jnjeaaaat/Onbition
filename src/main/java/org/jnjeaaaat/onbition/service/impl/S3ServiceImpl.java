@@ -1,8 +1,5 @@
 package org.jnjeaaaat.onbition.service.impl;
 
-import static org.jnjeaaaat.onbition.domain.dto.base.BaseStatus.FILE_DELETE_ERROR;
-import static org.jnjeaaaat.onbition.domain.dto.base.BaseStatus.FILE_UPLOAD_ERROR;
-
 import com.amazonaws.AmazonServiceException;
 import com.amazonaws.services.s3.AmazonS3;
 import com.amazonaws.services.s3.model.CannedAccessControlList;
@@ -16,7 +13,6 @@ import lombok.RequiredArgsConstructor;
 import lombok.extern.slf4j.Slf4j;
 import org.jnjeaaaat.onbition.config.storage.S3Component;
 import org.jnjeaaaat.onbition.domain.dto.file.FileFolder;
-import org.jnjeaaaat.onbition.exception.BaseException;
 import org.jnjeaaaat.onbition.service.FileService;
 import org.springframework.stereotype.Service;
 import org.springframework.web.multipart.MultipartFile;
@@ -34,7 +30,7 @@ public class S3ServiceImpl implements FileService {
 
   // 파일 저장
   @Override
-  public String uploadFile(MultipartFile file, FileFolder fileFolder) {
+  public String uploadFile(MultipartFile file, FileFolder fileFolder) throws IOException {
     log.info("[uploadFile] 파일 업로드 시도");
     //파일 이름 생성
     String fileName = getFileFolder(fileFolder) + createFileName(file.getOriginalFilename());
@@ -52,7 +48,7 @@ public class S3ServiceImpl implements FileService {
               .withCannedAcl(CannedAccessControlList.PublicReadWrite)
       );
     } catch (IOException e) {
-      throw new BaseException(FILE_UPLOAD_ERROR);
+      throw new IOException();
     }
 
     return getFileUrl(fileName);
@@ -70,7 +66,8 @@ public class S3ServiceImpl implements FileService {
       amazonS3.deleteObject(s3Component.getBucket(), key);
 
     } catch (AmazonServiceException e) {
-      throw new BaseException(FILE_DELETE_ERROR);
+      log.error("[deleteFile] 파일 삭제 실패");
+      throw new AmazonServiceException(e.getMessage());
     }
 
     log.info("[deleteFile] S3에 있는 파일 삭제");

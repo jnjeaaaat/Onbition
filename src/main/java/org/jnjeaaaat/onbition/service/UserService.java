@@ -1,5 +1,6 @@
 package org.jnjeaaaat.onbition.service;
 
+import java.io.IOException;
 import org.jnjeaaaat.onbition.domain.dto.user.PasswordModifyRequest;
 import org.jnjeaaaat.onbition.domain.dto.user.ResetPasswordRequest;
 import org.jnjeaaaat.onbition.domain.dto.user.UserModifyRequest;
@@ -12,7 +13,8 @@ import org.springframework.web.multipart.MultipartFile;
 public interface UserService {
 
   // 프로필사진, 이름 변경
-  UserModifyResponse updateUser(Long userId, MultipartFile image, UserModifyRequest request);
+  UserModifyResponse updateUser(Long userId, MultipartFile image, UserModifyRequest request)
+      throws IOException;
 
   // 비밀번호 변경
   void updatePassword(Long userId, PasswordModifyRequest request);

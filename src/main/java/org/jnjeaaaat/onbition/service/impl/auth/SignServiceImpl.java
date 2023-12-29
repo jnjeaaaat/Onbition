@@ -10,6 +10,7 @@ import static org.jnjeaaaat.onbition.domain.dto.base.BaseStatus.REFRESH_TOKEN_EX
 import static org.jnjeaaaat.onbition.domain.dto.base.BaseStatus.UN_MATCH_PASSWORD;
 
 import io.jsonwebtoken.ExpiredJwtException;
+import java.io.IOException;
 import java.util.Collections;
 import javax.servlet.http.HttpServletRequest;
 import lombok.RequiredArgsConstructor;
@@ -56,7 +57,7 @@ public class SignServiceImpl implements SignService {
   Response: user PK, profileImgUrl, uid, name, roles
    */
   @Override
-  public SignUpResponse signUp(MultipartFile image, SignUpRequest request) {
+  public SignUpResponse signUp(MultipartFile image, SignUpRequest request) throws IOException {
 
     log.info("[signUp] 회원가입 요청 - uid : {}", request.getUid());
     // 이미 존재하는 유저일때

@@ -14,6 +14,7 @@ import static org.mockito.BDDMockito.given;
 import static org.mockito.Mockito.times;
 import static org.mockito.Mockito.verify;
 
+import java.io.IOException;
 import java.util.Arrays;
 import java.util.List;
 import java.util.Optional;
@@ -64,7 +65,7 @@ class SignServiceImplTest {
 
   @Test
   @DisplayName("[service] 회원가입 성공")
-  void success_register() {
+  void success_register() throws IOException {
     //given
     BCryptPasswordEncoder passwordEncoder = new BCryptPasswordEncoder();
     MockMultipartFile image = getImageFile();

@@ -7,10 +7,12 @@ import static org.jnjeaaaat.onbition.domain.dto.base.BaseStatus.SAME_PASSWORD;
 import static org.jnjeaaaat.onbition.domain.dto.base.BaseStatus.UN_MATCH_PASSWORD;
 import static org.jnjeaaaat.onbition.domain.dto.base.BaseStatus.UN_MATCH_PHONE_NUM;
 
+import java.io.IOException;
 import java.util.Objects;
 import lombok.RequiredArgsConstructor;
 import lombok.extern.slf4j.Slf4j;
 import org.apache.commons.lang3.RandomStringUtils;
+import org.jnjeaaaat.onbition.config.client.SmsClient;
 import org.jnjeaaaat.onbition.domain.dto.file.FileFolder;
 import org.jnjeaaaat.onbition.domain.dto.user.PasswordModifyRequest;
 import org.jnjeaaaat.onbition.domain.dto.user.ResetPasswordRequest;
@@ -23,7 +25,6 @@ import org.jnjeaaaat.onbition.exception.BaseException;
 import org.jnjeaaaat.onbition.service.ImageService;
 import org.jnjeaaaat.onbition.service.UserService;
 import org.jnjeaaaat.onbition.util.JwtTokenUtil;
-import org.jnjeaaaat.onbition.util.SmsUtil;
 import org.springframework.security.crypto.password.PasswordEncoder;
 import org.springframework.stereotype.Service;
 import org.springframework.transaction.annotation.Transactional;
@@ -37,7 +38,7 @@ import org.springframework.web.multipart.MultipartFile;
 @RequiredArgsConstructor
 public class UserServiceImpl implements UserService {
 
-  private final SmsUtil smsUtil;
+  private final SmsClient smsClient;
   private final ImageService imageService;
   private final UserRepository userRepository;
   private final JwtTokenUtil jwtTokenUtil;
@@ -52,7 +53,8 @@ public class UserServiceImpl implements UserService {
    */
   @Override
   @Transactional
-  public UserModifyResponse updateUser(Long userId, MultipartFile image, UserModifyRequest request) {
+  public UserModifyResponse updateUser(Long userId, MultipartFile image, UserModifyRequest request)
+      throws IOException {
     log.info("[updateUser] 유저 정보 변경 - 유저 id : {}", userId);
     // 토큰 정보의 user 와 요청하는 userId 가 다를때
     if (!Objects.equals(userId, jwtTokenUtil.getUserIdFromToken())) {
@@ -129,7 +131,7 @@ public class UserServiceImpl implements UserService {
     String randomPassword = getRandomPassword();
     log.info("[resetPassword] randomPassword : {}", randomPassword);
     // 문자로 전송
-    smsUtil.sendOne(request.getPhone(), randomPassword);
+    smsClient.sendPasswordResetCode(request.getPhone(), randomPassword);
     // 랜덤 문자열로 비밀번호 저장
     user.setPassword(passwordEncoder.encode(randomPassword));
   }
@@ -137,7 +139,7 @@ public class UserServiceImpl implements UserService {
   /*
   프로필 사진 업데이트
    */
-  private void updateUserProfileImg(User user, MultipartFile image) {
+  private void updateUserProfileImg(User user, MultipartFile image) throws IOException {
     // 원래 이미지 삭제
     String oldFile = user.getProfileImgUrl();
     imageService.deleteImage(oldFile);

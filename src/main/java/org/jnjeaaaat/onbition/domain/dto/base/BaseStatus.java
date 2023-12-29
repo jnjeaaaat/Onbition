@@ -62,8 +62,6 @@ public enum BaseStatus {
 
 
   // file
-  FILE_UPLOAD_ERROR(false, INTERNAL_SERVER_ERROR.value(), "파일 업로드에 실패하였습니다."),
-  FILE_DELETE_ERROR(false, INTERNAL_SERVER_ERROR.value(), "파일 삭제에 실패하였습니다."),
   NOT_FOUND_FILE(false, INTERNAL_SERVER_ERROR.value(), "파일을 찾을 수 없습니다."),
   
 

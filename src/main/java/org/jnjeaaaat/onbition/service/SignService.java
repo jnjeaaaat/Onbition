@@ -1,5 +1,6 @@
 package org.jnjeaaaat.onbition.service;
 
+import java.io.IOException;
 import javax.servlet.http.HttpServletRequest;
 import org.jnjeaaaat.onbition.domain.dto.auth.ReissueResponse;
 import org.jnjeaaaat.onbition.domain.dto.sign.SignInRequest;
@@ -14,7 +15,7 @@ import org.springframework.web.multipart.MultipartFile;
 public interface SignService {
 
   // 회원가입
-  SignUpResponse signUp(MultipartFile image, SignUpRequest request);
+  SignUpResponse signUp(MultipartFile image, SignUpRequest request) throws IOException;
 
   // 로그인
   SignInResponse signIn(SignInRequest request);

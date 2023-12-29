@@ -1,5 +1,6 @@
 package org.jnjeaaaat.onbition.service.impl;
 
+import java.io.IOException;
 import lombok.RequiredArgsConstructor;
 import lombok.extern.slf4j.Slf4j;
 import org.jnjeaaaat.onbition.domain.dto.file.FileFolder;
@@ -23,7 +24,7 @@ public class ProfileImageServiceImpl implements ImageService {
   MultipartFile 타입의 image, PROFILE_IMAGE
    */
   @Override
-  public String saveImage(MultipartFile image, FileFolder fileFolder) {
+  public String saveImage(MultipartFile image, FileFolder fileFolder) throws IOException {
     return fileService.uploadFile(image, fileFolder);
   }
 

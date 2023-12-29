@@ -13,6 +13,7 @@ import static org.mockito.ArgumentMatchers.anyLong;
 import static org.mockito.ArgumentMatchers.anyString;
 import static org.mockito.BDDMockito.given;
 
+import java.io.IOException;
 import java.util.Optional;
 import org.jnjeaaaat.onbition.common.MockImage;
 import org.jnjeaaaat.onbition.domain.dto.user.PasswordModifyRequest;
@@ -57,7 +58,7 @@ class UserServiceImplTest {
 
   @Test
   @DisplayName("[service] 유저 정보 변경 성공")
-  void success_update_user() {
+  void success_update_user() throws IOException {
     //given
     given(userRepository.findById(any()))
         .willReturn(Optional.of(User.builder()

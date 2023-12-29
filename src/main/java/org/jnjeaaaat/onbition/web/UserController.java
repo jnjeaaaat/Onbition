@@ -4,6 +4,7 @@ import static org.jnjeaaaat.onbition.domain.dto.base.BaseStatus.SUCCESS_RESET_PA
 import static org.jnjeaaaat.onbition.domain.dto.base.BaseStatus.SUCCESS_UPDATE_PASSWORD;
 import static org.jnjeaaaat.onbition.domain.dto.base.BaseStatus.SUCCESS_UPDATE_USER;
 
+import java.io.IOException;
 import javax.validation.Valid;
 import javax.validation.constraints.Positive;
 import lombok.RequiredArgsConstructor;
@@ -46,7 +47,7 @@ public class UserController {
   public BaseResponse<UserModifyResponse> updateUser(
       @Positive @PathVariable Long userId,
       @RequestPart(value = "image", required = false) MultipartFile image,
-      @Valid @RequestPart(value = "request") UserModifyRequest request) {
+      @Valid @RequestPart(value = "request") UserModifyRequest request) throws IOException {
 
     log.info("[updateUser] 유저 정보 변경 요청");
     return BaseResponse.success(
