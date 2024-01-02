@@ -36,6 +36,9 @@ public enum BaseStatus {
   SUCCESS_UPDATE_PASSWORD(true, OK.value(), "비밀번호가 변경되었습니다."),
   SUCCESS_RESET_PASSWORD(true, OK.value(), "비밀번호가 초기화 되었습니다."),
 
+  // painting
+  SUCCESS_CREATE_PAINTING(true, OK.value(), "그림을 등록하였습니다."),
+
 
 
   //////////////////////////////// failed response ////////////////////////////////
@@ -51,7 +54,6 @@ public enum BaseStatus {
   NEED_REPOST_PHONE_NUMBER(false, BAD_REQUEST.value(), "번호를 다시 입력해주세요."),
   UN_MATCH_VERIFICATION_CODE(false, BAD_REQUEST.value(), "인증번호가 일치하지 않습니다."),
 
-
   // auth
   ACCESS_TOKEN_EXPIRED_TOKEN(false, UNAUTHORIZED.value(), "만료된 토큰입니다. 재발급 요청해주세요."),
   REFRESH_TOKEN_EXPIRED_TOKEN(false, UNAUTHORIZED.value(), "다시 로그인해주세요"),
@@ -59,6 +61,9 @@ public enum BaseStatus {
   NOT_FOUND_TOKEN(false, UNAUTHORIZED.value(), "토큰이 존재하지 않습니다."),
   INVALID_TOKEN(false, UNAUTHORIZED.value(), "유효하지 않는 토큰입니다."),
   ALREADY_LOGOUT(false, UNAUTHORIZED.value(), "이미 로그아웃 상태입니다."),
+
+  // painting
+  UNDER_MIN_PRICE(false, BAD_REQUEST.value(), "판매되는 그림의 가격은 1000원 이상이어야 합니다."),
 
 
   // file

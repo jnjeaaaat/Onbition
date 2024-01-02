@@ -49,7 +49,7 @@ class SignServiceImplTest {
   private TokenRepository tokenRepository;
 
   @Mock
-  private ProfileImageServiceImpl imageService;
+  private ImageServiceImpl imageService;
 
   @Mock
   private JwtTokenUtil jwtTokenUtil;

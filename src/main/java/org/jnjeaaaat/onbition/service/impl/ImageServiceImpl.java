@@ -16,7 +16,7 @@ import org.springframework.web.multipart.MultipartFile;
 @Slf4j
 @Service
 @RequiredArgsConstructor
-public class ProfileImageServiceImpl implements ImageService {
+public class ImageServiceImpl implements ImageService {
   private final FileService fileService;
 
   /*

@@ -6,11 +6,13 @@ import com.vladmihalcea.hibernate.type.json.JsonType;
 import java.time.LocalDateTime;
 import java.util.ArrayList;
 import java.util.List;
+import javax.persistence.CascadeType;
 import javax.persistence.Column;
 import javax.persistence.Entity;
 import javax.persistence.GeneratedValue;
 import javax.persistence.GenerationType;
 import javax.persistence.Id;
+import javax.persistence.OneToMany;
 import lombok.AllArgsConstructor;
 import lombok.Builder;
 import lombok.Getter;
@@ -69,4 +71,17 @@ public class User extends BaseEntity {
   @Builder.Default
   private List<String> roles = new ArrayList<>(); // 유저 권한 리스트
 
+  @OneToMany(mappedBy = "user", cascade = CascadeType.ALL, orphanRemoval = true)
+  @Builder.Default
+  private List<Painting> paintings = new ArrayList<>();
+
+  /*
+  유저 새로운 권한 추가 method
+   */
+  public void addRoles(String newRole) {
+    // 이미 권한이 있는게 아니면 추가
+    if (!this.roles.stream().anyMatch(s -> s.equals(newRole))) {
+      this.roles.add(newRole);
+    }
+  }
 }

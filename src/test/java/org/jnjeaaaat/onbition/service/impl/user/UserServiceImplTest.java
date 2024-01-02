@@ -24,7 +24,7 @@ import org.jnjeaaaat.onbition.domain.entity.User;
 import org.jnjeaaaat.onbition.domain.repository.TokenRepository;
 import org.jnjeaaaat.onbition.domain.repository.UserRepository;
 import org.jnjeaaaat.onbition.exception.BaseException;
-import org.jnjeaaaat.onbition.service.impl.ProfileImageServiceImpl;
+import org.jnjeaaaat.onbition.service.impl.ImageServiceImpl;
 import org.jnjeaaaat.onbition.util.JwtTokenUtil;
 import org.junit.jupiter.api.DisplayName;
 import org.junit.jupiter.api.Test;
@@ -48,7 +48,7 @@ class UserServiceImplTest {
   private JwtTokenUtil jwtTokenUtil;
 
   @Mock
-  private ProfileImageServiceImpl imageService;
+  private ImageServiceImpl imageService;
 
   @InjectMocks
   private UserServiceImpl userService;
