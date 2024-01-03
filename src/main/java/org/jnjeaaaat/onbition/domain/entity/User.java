@@ -5,7 +5,9 @@ import com.fasterxml.jackson.annotation.JsonProperty.Access;
 import com.vladmihalcea.hibernate.type.json.JsonType;
 import java.time.LocalDateTime;
 import java.util.ArrayList;
+import java.util.HashSet;
 import java.util.List;
+import java.util.Set;
 import javax.persistence.CascadeType;
 import javax.persistence.Column;
 import javax.persistence.Entity;
@@ -69,7 +71,7 @@ public class User extends BaseEntity {
   @Type(type = "json") // TypeDef 를 통해 선언한 "json" Type 적용
   @Column(columnDefinition = "json") // MySQL column 도 "json" 적용
   @Builder.Default
-  private List<String> roles = new ArrayList<>(); // 유저 권한 리스트
+  private Set<String> roles = new HashSet<>(); // 유저 권한 리스트
 
   @OneToMany(mappedBy = "user", cascade = CascadeType.ALL, orphanRemoval = true)
   @Builder.Default
@@ -78,10 +80,7 @@ public class User extends BaseEntity {
   /*
   유저 새로운 권한 추가 method
    */
-  public void addRoles(String newRole) {
-    // 이미 권한이 있는게 아니면 추가
-    if (!this.roles.stream().anyMatch(s -> s.equals(newRole))) {
-      this.roles.add(newRole);
-    }
+  public boolean addRoles(String newRole) {
+    return this.roles.add(newRole);
   }
 }

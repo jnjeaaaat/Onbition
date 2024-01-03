@@ -1,7 +1,7 @@
 package org.jnjeaaaat.onbition.domain.dto.paint;
 
 import java.time.LocalDateTime;
-import java.util.List;
+import java.util.Set;
 import lombok.AllArgsConstructor;
 import lombok.Builder;
 import lombok.Getter;
@@ -28,7 +28,7 @@ public class PaintingInputResponse {
   private Boolean isSale;     // 그림 판매 여부
   private Long auctionPrice;    // 경매 시작 가격
   private Long salePrice;   // 매매 가격
-  private List<String> tags;    // tags 리스트
+  private Set<String> tags;    // tags 리스트
   private LocalDateTime createdAt;    // 그림 생성 시각
 
   public static PaintingInputResponse from(Painting painting) {

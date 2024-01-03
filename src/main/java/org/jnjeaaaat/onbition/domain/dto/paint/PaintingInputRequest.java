@@ -1,6 +1,6 @@
 package org.jnjeaaaat.onbition.domain.dto.paint;
 
-import java.util.List;
+import java.util.Set;
 import javax.validation.constraints.NotBlank;
 import javax.validation.constraints.NotNull;
 import javax.validation.constraints.Size;
@@ -34,6 +34,6 @@ public class PaintingInputRequest {
   private Long salePrice;   // 매매 가격
 
   @TagSize
-  private List<String> tags;    // tags 리스트
+  private Set<String> tags;    // tags 리스트
 
 }

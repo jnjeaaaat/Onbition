@@ -1,7 +1,7 @@
 package org.jnjeaaaat.onbition.domain.dto.user;
 
 import java.time.LocalDateTime;
-import java.util.List;
+import java.util.Set;
 import lombok.AllArgsConstructor;
 import lombok.Builder;
 import lombok.Getter;
@@ -28,7 +28,7 @@ public class UserDto {
   private String phone;     // 유저 핸드폰번호
   private String cardNum;   // 유저 카드번호
   private String accountNum;  // 유저 계좌번호
-  private List<String> roles; // 유저 권한
+  private Set<String> roles; // 유저 권한
 
   private LocalDateTime createdAt;  // 유저 생성 일자
   private LocalDateTime updatedAt;  // 유저정보 변경 일자

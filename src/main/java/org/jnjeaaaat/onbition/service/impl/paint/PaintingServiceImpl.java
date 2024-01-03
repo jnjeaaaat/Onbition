@@ -34,21 +34,24 @@ public class PaintingServiceImpl implements PaintingService {
 
   private final String DREAMER = "ROLE_DREAMER";
 
+  /*
+  [그림 등록]
+  Request: 등록하는 유저, 등록하는 그림 이미지, 제목, 설명, 판매여부, 경매가, 매매가, 태그 리스트
+  Response: 등록하는 유저, 등록하는 그림 이미지, 제목, 설명, 판매여부, 경매가, 매매가, 태그 리스트, 등록한 시간
+   */
   @Override
   @Transactional
   public PaintingInputResponse createPainting(String uid, MultipartFile image,
       PaintingInputRequest request) throws IOException {
 
-    log.info("[createPainting]");
+    log.info("[createPainting] 그림 등록");
 
     User user = userRepository.findByUidAndDeletedAtNull(uid)
         .orElseThrow(() -> new BaseException(NOT_FOUND_USER));
 
     // isSale이 true인데 가격이 1000원 미만일때
-    if (request.getIsSale()) {
-      if (request.getAuctionPrice() < 1000L || request.getSalePrice() < 1000L) {
-        throw new BaseException(UNDER_MIN_PRICE);
-      }
+    if (request.getIsSale() && (request.getAuctionPrice() < 1000L || request.getSalePrice() < 1000L)) {
+      throw new BaseException(UNDER_MIN_PRICE);
     }
 
     // user 권한 "DREAMER" 추가

@@ -39,10 +39,10 @@ public class PaintingController {
       MediaType.MULTIPART_FORM_DATA_VALUE})
   public BaseResponse<PaintingInputResponse> createPainting(
       @AuthUser UserDetails userDetails,
-      @RequestPart(value = "image") MultipartFile image,
+      @RequestPart(value = "image", required = false) MultipartFile image,
       @Valid @RequestPart(value = "request") PaintingInputRequest request) throws IOException {
 
-    log.info("[createPaint] 그림 추가 요청");
+    log.info("[createPaint] 그림 등록 요청");
 
     return BaseResponse.success(
         SUCCESS_CREATE_PAINTING,

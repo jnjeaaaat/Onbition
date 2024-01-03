@@ -1,8 +1,8 @@
 package org.jnjeaaaat.onbition.domain.entity;
 
 import com.vladmihalcea.hibernate.type.json.JsonType;
-import java.util.ArrayList;
-import java.util.List;
+import java.util.HashSet;
+import java.util.Set;
 import javax.persistence.Column;
 import javax.persistence.Entity;
 import javax.persistence.FetchType;
@@ -64,6 +64,6 @@ public class Painting extends BaseEntity {
   @Type(type = "json")
   @Column(columnDefinition = "json")
   @Builder.Default
-  private List<String> tags = new ArrayList<>();    // tags 리스트
+  private Set<String> tags = new HashSet<>();    // tags 리스트
 
 }
