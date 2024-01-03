@@ -1,6 +1,6 @@
 package org.jnjeaaaat.onbition.domain.dto.sign;
 
-import java.util.List;
+import java.util.Set;
 import lombok.AllArgsConstructor;
 import lombok.Builder;
 import lombok.Getter;
@@ -22,7 +22,7 @@ public class SignUpResponse {
   private String profileImgUrl;  // 유저 프로필사진 Url
   private String uid;   // 유저 id
   private String name;  // 유저 이름
-  private List<String> roles;   // 유저 권한 목록
+  private Set<String> roles;   // 유저 권한 목록
 
   public static SignUpResponse from(UserDto userDto) {
     return SignUpResponse.builder()

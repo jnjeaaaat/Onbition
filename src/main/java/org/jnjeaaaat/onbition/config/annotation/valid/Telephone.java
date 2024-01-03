@@ -1,4 +1,4 @@
-package org.jnjeaaaat.onbition.config.annotation;
+package org.jnjeaaaat.onbition.config.annotation.valid;
 
 import java.lang.annotation.ElementType;
 import java.lang.annotation.Retention;

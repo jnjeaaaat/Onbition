@@ -11,8 +11,7 @@ import static org.springframework.test.web.servlet.result.MockMvcResultMatchers.
 
 import com.fasterxml.jackson.databind.ObjectMapper;
 import java.nio.charset.StandardCharsets;
-import java.util.Arrays;
-import java.util.List;
+import java.util.Set;
 import org.jnjeaaaat.onbition.domain.dto.auth.ReissueResponse;
 import org.jnjeaaaat.onbition.domain.dto.sign.SignInRequest;
 import org.jnjeaaaat.onbition.domain.dto.sign.SignInResponse;
@@ -73,13 +72,13 @@ class SignControllerTest {
 
     String valueAsString = objectMapper.writeValueAsString(request);
 
-    List<String> roleList = Arrays.asList("ROLE_VIEWER");
+    Set<String> roleSet = Set.of("ROLE_VIEWER");
     given(signService.signUp(any(), any()))
         .willReturn(SignUpResponse.builder()
             .profileImgUrl("https://onbition/jnjeaaaat/org")
             .uid("testId")
             .name("testName")
-            .roles(roleList)
+            .roles(roleSet)
             .build());
 
     //when
@@ -107,11 +106,11 @@ class SignControllerTest {
   @DisplayName("[controller] 로그인 성공")
   void success_signIn() throws Exception {
     //given
-    List<String> roleList = Arrays.asList("ROLE_VIEWER");
+    Set<String> roleSet = Set.of("ROLE_VIEWER");
     given(signService.signIn(any()))
         .willReturn(SignInResponse.builder()
             .uid("testUid")
-            .roles(roleList)
+            .roles(roleSet)
             .accessToken("testAccessToken")
             .refreshToken("testRefreshToken")
             .build());

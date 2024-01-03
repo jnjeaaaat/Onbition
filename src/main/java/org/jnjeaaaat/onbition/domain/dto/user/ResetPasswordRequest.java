@@ -4,7 +4,7 @@ import javax.validation.constraints.NotBlank;
 import lombok.AllArgsConstructor;
 import lombok.Getter;
 import lombok.NoArgsConstructor;
-import org.jnjeaaaat.onbition.config.annotation.Telephone;
+import org.jnjeaaaat.onbition.config.annotation.valid.Telephone;
 
 /**
  * 비밀번호 초기화 Request class

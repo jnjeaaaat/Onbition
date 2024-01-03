@@ -5,7 +5,7 @@ import lombok.AllArgsConstructor;
 import lombok.Builder;
 import lombok.Getter;
 import lombok.NoArgsConstructor;
-import org.jnjeaaaat.onbition.config.annotation.Telephone;
+import org.jnjeaaaat.onbition.config.annotation.valid.Telephone;
 
 /**
  * 회원가입에 필요한 Request class

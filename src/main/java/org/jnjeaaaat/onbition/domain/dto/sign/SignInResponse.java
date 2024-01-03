@@ -1,6 +1,6 @@
 package org.jnjeaaaat.onbition.domain.dto.sign;
 
-import java.util.List;
+import java.util.Set;
 import lombok.AllArgsConstructor;
 import lombok.Builder;
 import lombok.Getter;
@@ -21,7 +21,7 @@ public class SignInResponse {
 
   private Long id;  // 유저 PK
   private String uid;   // 유저 id
-  private List<String> roles;  // 유저 권한
+  private Set<String> roles;  // 유저 권한
   private String accessToken;  // accessToken
   private String refreshToken; // refreshToken
 

@@ -80,7 +80,7 @@ public class SignServiceImpl implements SignService {
                 .profileImgUrl(imageUrl)  // image Url 저장 (http://...)
                 .name(request.getName())  // 유저 이름
                 .phone(request.getPhone()) // 유저 핸드포 번호
-                .roles(Collections.singletonList("ROLE_VIEWER")) // 기본 권한 VIEWER
+                .roles(Collections.singleton("ROLE_VIEWER")) // 기본 권한 VIEWER
                 .build()
             )
         )

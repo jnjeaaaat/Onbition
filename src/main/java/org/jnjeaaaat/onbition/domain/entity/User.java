@@ -5,12 +5,16 @@ import com.fasterxml.jackson.annotation.JsonProperty.Access;
 import com.vladmihalcea.hibernate.type.json.JsonType;
 import java.time.LocalDateTime;
 import java.util.ArrayList;
+import java.util.HashSet;
 import java.util.List;
+import java.util.Set;
+import javax.persistence.CascadeType;
 import javax.persistence.Column;
 import javax.persistence.Entity;
 import javax.persistence.GeneratedValue;
 import javax.persistence.GenerationType;
 import javax.persistence.Id;
+import javax.persistence.OneToMany;
 import lombok.AllArgsConstructor;
 import lombok.Builder;
 import lombok.Getter;
@@ -67,6 +71,16 @@ public class User extends BaseEntity {
   @Type(type = "json") // TypeDef 를 통해 선언한 "json" Type 적용
   @Column(columnDefinition = "json") // MySQL column 도 "json" 적용
   @Builder.Default
-  private List<String> roles = new ArrayList<>(); // 유저 권한 리스트
+  private Set<String> roles = new HashSet<>(); // 유저 권한 리스트
 
+  @OneToMany(mappedBy = "user", cascade = CascadeType.ALL, orphanRemoval = true)
+  @Builder.Default
+  private List<Painting> paintings = new ArrayList<>();
+
+  /*
+  유저 새로운 권한 추가 method
+   */
+  public boolean addRoles(String newRole) {
+    return this.roles.add(newRole);
+  }
 }

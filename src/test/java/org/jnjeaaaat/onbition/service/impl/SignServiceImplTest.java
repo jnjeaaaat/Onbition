@@ -15,9 +15,8 @@ import static org.mockito.Mockito.times;
 import static org.mockito.Mockito.verify;
 
 import java.io.IOException;
-import java.util.Arrays;
-import java.util.List;
 import java.util.Optional;
+import java.util.Set;
 import org.jnjeaaaat.onbition.domain.dto.sign.SignInRequest;
 import org.jnjeaaaat.onbition.domain.dto.sign.SignUpRequest;
 import org.jnjeaaaat.onbition.domain.dto.sign.SignUpResponse;
@@ -49,7 +48,7 @@ class SignServiceImplTest {
   private TokenRepository tokenRepository;
 
   @Mock
-  private ProfileImageServiceImpl imageService;
+  private ImageServiceImpl imageService;
 
   @Mock
   private JwtTokenUtil jwtTokenUtil;
@@ -71,7 +70,7 @@ class SignServiceImplTest {
     MockMultipartFile image = getImageFile();
 
     // role list
-    List<String> roleList = Arrays.asList("ROLE_VIEWER");
+    Set<String> roleSet = Set.of("ROLE_VIEWER");
 
     // request
     SignUpRequest request = SignUpRequest.builder()
@@ -87,7 +86,7 @@ class SignServiceImplTest {
             .password(passwordEncoder.encode("password")) // 암호화된 비밀번호 저장
             .profileImgUrl("https://onbition/jnjeaaaat/org")
             .name("testName")
-            .roles(roleList)
+            .roles(roleSet)
             .phone("010-1234-1334")
             .build());
 
@@ -169,13 +168,13 @@ class SignServiceImplTest {
   @DisplayName("[service] 토큰 생성 성공")
   void success_create_token() {
     //given
-    List<String> roleList = Arrays.asList("ROLE_VIEWER");
+    Set<String> roleSet = Set.of("ROLE_VIEWER");
     User user = User.builder()
         .uid("testId")
         .password(passwordEncoder.encode("password")) // 암호화된 비밀번호 저장
         .profileImgUrl("https://onbition/jnjeaaaat/org")
         .name("testName")
-        .roles(roleList)
+        .roles(roleSet)
         .phone("010-1234-1334")
         .build();
 

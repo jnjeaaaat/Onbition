@@ -6,7 +6,7 @@ import static org.jnjeaaaat.onbition.domain.dto.base.BaseStatus.SUCCESS_SEND_TEX
 import javax.validation.constraints.NotBlank;
 import lombok.RequiredArgsConstructor;
 import lombok.extern.slf4j.Slf4j;
-import org.jnjeaaaat.onbition.config.annotation.Telephone;
+import org.jnjeaaaat.onbition.config.annotation.valid.Telephone;
 import org.jnjeaaaat.onbition.domain.dto.auth.SendTextResponse;
 import org.jnjeaaaat.onbition.domain.dto.base.BaseResponse;
 import org.jnjeaaaat.onbition.service.SMSService;

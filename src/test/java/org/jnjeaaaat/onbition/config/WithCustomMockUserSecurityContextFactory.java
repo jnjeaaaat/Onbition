@@ -1,11 +1,14 @@
 package org.jnjeaaaat.onbition.config;
 
-import java.util.List;
+import java.util.Set;
+import org.jnjeaaaat.onbition.domain.dto.auth.UserDetailsImpl;
+import org.jnjeaaaat.onbition.domain.entity.User;
 import org.springframework.security.authentication.UsernamePasswordAuthenticationToken;
 import org.springframework.security.core.Authentication;
 import org.springframework.security.core.authority.SimpleGrantedAuthority;
 import org.springframework.security.core.context.SecurityContext;
 import org.springframework.security.core.context.SecurityContextHolder;
+import org.springframework.security.core.userdetails.UserDetails;
 import org.springframework.security.test.context.support.WithSecurityContextFactory;
 
 /**
@@ -16,10 +19,15 @@ public class WithCustomMockUserSecurityContextFactory implements
 
   @Override
   public SecurityContext createSecurityContext(WithCustomMockUser annotation) {
-    String email = annotation.uid();
+    String uid = annotation.uid();
+    String role = annotation.role();
 
-    Authentication auth = new UsernamePasswordAuthenticationToken(email, "",
-        List.of(new SimpleGrantedAuthority("ROLE_VIEWER")));
+    UserDetails userDetails = new UserDetailsImpl(User.builder()
+        .uid(uid)
+        .build());
+
+    Authentication auth = new UsernamePasswordAuthenticationToken(userDetails, "password",
+        Set.of(new SimpleGrantedAuthority(role)));
 
     SecurityContext context = SecurityContextHolder.getContext();
     context.setAuthentication(auth);
