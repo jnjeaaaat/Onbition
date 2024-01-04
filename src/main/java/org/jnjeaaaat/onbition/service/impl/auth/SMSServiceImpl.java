@@ -11,7 +11,7 @@ import org.jnjeaaaat.onbition.config.client.SmsClient;
 import org.jnjeaaaat.onbition.domain.dto.auth.SendTextResponse;
 import org.jnjeaaaat.onbition.exception.BaseException;
 import org.jnjeaaaat.onbition.service.SMSService;
-import org.jnjeaaaat.onbition.util.RedisUtil;
+import org.jnjeaaaat.onbition.config.redis.RedisService;
 import org.springframework.stereotype.Service;
 
 /**
@@ -23,7 +23,7 @@ import org.springframework.stereotype.Service;
 public class SMSServiceImpl implements SMSService {
 
   private final SmsClient smsClient;
-  private final RedisUtil redisUtil;
+  private final RedisService redisService;
 
   private final Long expireTimeMs = 60 * 3L; // 인증코드 유효기간
 
@@ -43,7 +43,7 @@ public class SMSServiceImpl implements SMSService {
     log.info("[sendMessage] 문자 전송 성공");
 
     log.info("[saveToRedis] Redis 서버에 인증코드 저장");
-    redisUtil.setDataExpire(phone, verificationCode, expireTimeMs);
+    redisService.setDataExpire(phone, verificationCode, expireTimeMs);
     log.info("[saveToRedis] Redis 서버에 인증코드 저장 성공");
 
     return new SendTextResponse(verificationCode);
@@ -57,11 +57,11 @@ public class SMSServiceImpl implements SMSService {
   @Override
   public String authenticatePhoneNum(String phone, String code) {
     // key 값이 없을 때
-    if (redisUtil.getData(phone) == null) {
+    if (redisService.getData(phone) == null) {
       throw new BaseException(NEED_REPOST_PHONE_NUMBER);
     }
     // value 값과 code 값이 다를때
-    if (!Objects.equals(redisUtil.getData(phone), code)) {
+    if (!Objects.equals(redisService.getData(phone), code)) {
       throw new BaseException(UN_MATCH_VERIFICATION_CODE);
     }
 

@@ -1,4 +1,4 @@
-package org.jnjeaaaat.onbition.util;
+package org.jnjeaaaat.onbition.config.redis;
 
 import java.time.Duration;
 import lombok.RequiredArgsConstructor;
@@ -13,7 +13,7 @@ import org.springframework.stereotype.Service;
 @Slf4j
 @Service
 @RequiredArgsConstructor
-public class RedisUtil {
+public class RedisService {
 
   private final StringRedisTemplate redisTemplate;
 

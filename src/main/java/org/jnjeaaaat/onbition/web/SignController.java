@@ -18,7 +18,7 @@ import org.jnjeaaaat.onbition.domain.dto.sign.SignInResponse;
 import org.jnjeaaaat.onbition.domain.dto.sign.SignUpRequest;
 import org.jnjeaaaat.onbition.domain.dto.sign.SignUpResponse;
 import org.jnjeaaaat.onbition.service.SignService;
-import org.jnjeaaaat.onbition.util.JwtTokenUtil;
+import org.jnjeaaaat.onbition.config.security.JwtTokenProvider;
 import org.springframework.http.MediaType;
 import org.springframework.web.bind.annotation.GetMapping;
 import org.springframework.web.bind.annotation.PostMapping;
@@ -38,7 +38,7 @@ import org.springframework.web.multipart.MultipartFile;
 public class SignController {
 
   private final SignService signService;
-  private final JwtTokenUtil jwtTokenUtil;
+  private final JwtTokenProvider jwtTokenProvider;
 
   /*
   [회원가입]
@@ -114,12 +114,12 @@ public class SignController {
    */
   @GetMapping("/test")
   public BaseResponse test(HttpServletRequest request) {
-    log.info("[test] token : {}", jwtTokenUtil.resolveToken(request));
+    log.info("[test] token : {}", jwtTokenProvider.resolveToken(request));
 
-    String token = jwtTokenUtil.resolveToken(request);
-    log.info("[test] isExpiredToken: {}", jwtTokenUtil.validateToken(token));
+    String token = jwtTokenProvider.resolveToken(request);
+    log.info("[test] isExpiredToken: {}", jwtTokenProvider.validateToken(token));
 
-    Long userId = jwtTokenUtil.getUserIdFromToken();
+    Long userId = jwtTokenProvider.getUserIdFromToken();
     log.info("[test] userId : {}", userId);
 
 

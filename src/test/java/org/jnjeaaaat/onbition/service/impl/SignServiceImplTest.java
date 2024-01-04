@@ -25,8 +25,8 @@ import org.jnjeaaaat.onbition.domain.repository.TokenRepository;
 import org.jnjeaaaat.onbition.domain.repository.UserRepository;
 import org.jnjeaaaat.onbition.exception.BaseException;
 import org.jnjeaaaat.onbition.service.impl.auth.SignServiceImpl;
-import org.jnjeaaaat.onbition.util.JwtTokenUtil;
-import org.jnjeaaaat.onbition.util.RedisUtil;
+import org.jnjeaaaat.onbition.config.security.JwtTokenProvider;
+import org.jnjeaaaat.onbition.config.redis.RedisService;
 import org.junit.jupiter.api.DisplayName;
 import org.junit.jupiter.api.Test;
 import org.junit.jupiter.api.extension.ExtendWith;
@@ -51,10 +51,10 @@ class SignServiceImplTest {
   private ImageServiceImpl imageService;
 
   @Mock
-  private JwtTokenUtil jwtTokenUtil;
+  private JwtTokenProvider jwtTokenProvider;
 
   @Mock
-  private RedisUtil redisUtil;
+  private RedisService redisService;
 
   @InjectMocks
   private SignServiceImpl signService;
@@ -178,14 +178,14 @@ class SignServiceImplTest {
         .phone("010-1234-1334")
         .build();
 
-    given(jwtTokenUtil.createAccessToken(any()))
+    given(jwtTokenProvider.createAccessToken(any()))
         .willReturn("testAccessToken");
-    given(jwtTokenUtil.createRefreshToken(any()))
+    given(jwtTokenProvider.createRefreshToken(any()))
         .willReturn("testRefreshToken");
 
     //when
-    String accessToken = jwtTokenUtil.createAccessToken(user);
-    String refreshToken = jwtTokenUtil.createRefreshToken(user);
+    String accessToken = jwtTokenProvider.createAccessToken(user);
+    String refreshToken = jwtTokenProvider.createRefreshToken(user);
 
     //then
     assertEquals("testAccessToken", accessToken);

@@ -24,7 +24,7 @@ import org.jnjeaaaat.onbition.domain.repository.UserRepository;
 import org.jnjeaaaat.onbition.exception.BaseException;
 import org.jnjeaaaat.onbition.service.ImageService;
 import org.jnjeaaaat.onbition.service.UserService;
-import org.jnjeaaaat.onbition.util.JwtTokenUtil;
+import org.jnjeaaaat.onbition.config.security.JwtTokenProvider;
 import org.springframework.security.crypto.password.PasswordEncoder;
 import org.springframework.stereotype.Service;
 import org.springframework.transaction.annotation.Transactional;
@@ -41,7 +41,7 @@ public class UserServiceImpl implements UserService {
   private final SmsClient smsClient;
   private final ImageService imageService;
   private final UserRepository userRepository;
-  private final JwtTokenUtil jwtTokenUtil;
+  private final JwtTokenProvider jwtTokenProvider;
   private final PasswordEncoder passwordEncoder;
 
   private final int RANDOM_STRING_LENGTH = 10;
@@ -57,7 +57,7 @@ public class UserServiceImpl implements UserService {
       throws IOException {
     log.info("[updateUser] 유저 정보 변경 - 유저 id : {}", userId);
     // 토큰 정보의 user 와 요청하는 userId 가 다를때
-    if (!Objects.equals(userId, jwtTokenUtil.getUserIdFromToken())) {
+    if (!Objects.equals(userId, jwtTokenProvider.getUserIdFromToken())) {
       throw new BaseException(NO_AUTHORITY);
     }
 
@@ -89,7 +89,7 @@ public class UserServiceImpl implements UserService {
   public void updatePassword(Long userId, PasswordModifyRequest request) {
     log.info("[updateUser] 유저 정보 변경 - 유저 id : {}", userId);
     // 토큰 정보의 user 와 요청하는 userId 가 다를때
-    if (!Objects.equals(userId, jwtTokenUtil.getUserIdFromToken())) {
+    if (!Objects.equals(userId, jwtTokenProvider.getUserIdFromToken())) {
       throw new BaseException(NO_AUTHORITY);
     }
 

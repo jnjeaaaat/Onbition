@@ -10,7 +10,7 @@ import static org.springframework.test.web.servlet.result.MockMvcResultMatchers.
 import com.fasterxml.jackson.databind.ObjectMapper;
 import org.jnjeaaaat.onbition.domain.dto.auth.SendTextResponse;
 import org.jnjeaaaat.onbition.service.impl.auth.SMSServiceImpl;
-import org.jnjeaaaat.onbition.util.JwtTokenUtil;
+import org.jnjeaaaat.onbition.config.security.JwtTokenProvider;
 import org.jnjeaaaat.onbition.web.SMSController;
 import org.junit.jupiter.api.DisplayName;
 import org.junit.jupiter.api.Test;
@@ -28,7 +28,7 @@ class SMSControllerTest {
   SMSServiceImpl smsService;
 
   @MockBean
-  JwtTokenUtil jwtTokenUtil;
+  JwtTokenProvider jwtTokenProvider;
 
   @Autowired
   MockMvc mockMvc;

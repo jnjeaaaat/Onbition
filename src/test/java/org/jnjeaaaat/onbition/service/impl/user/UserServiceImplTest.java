@@ -25,7 +25,7 @@ import org.jnjeaaaat.onbition.domain.repository.TokenRepository;
 import org.jnjeaaaat.onbition.domain.repository.UserRepository;
 import org.jnjeaaaat.onbition.exception.BaseException;
 import org.jnjeaaaat.onbition.service.impl.ImageServiceImpl;
-import org.jnjeaaaat.onbition.util.JwtTokenUtil;
+import org.jnjeaaaat.onbition.config.security.JwtTokenProvider;
 import org.junit.jupiter.api.DisplayName;
 import org.junit.jupiter.api.Test;
 import org.junit.jupiter.api.extension.ExtendWith;
@@ -45,7 +45,7 @@ class UserServiceImplTest {
   private TokenRepository tokenRepository;
 
   @Mock
-  private JwtTokenUtil jwtTokenUtil;
+  private JwtTokenProvider jwtTokenProvider;
 
   @Mock
   private ImageServiceImpl imageService;
@@ -69,7 +69,7 @@ class UserServiceImplTest {
                 .build()
             )
         );
-    given(jwtTokenUtil.getUserIdFromToken())
+    given(jwtTokenProvider.getUserIdFromToken())
         .willReturn(1L);
     given(imageService.saveImage(any(), any()))
         .willReturn("newProfileImgUrl");
@@ -91,7 +91,7 @@ class UserServiceImplTest {
   @DisplayName("[service] 유저 정보 변경 실패 - 권한이 없는 토큰")
   void failed_update_user_UN_MATCH_TOKEN() {
     //given
-    given(jwtTokenUtil.getUserIdFromToken())
+    given(jwtTokenProvider.getUserIdFromToken())
         .willReturn(2L);
     //when
     BaseException exception = assertThrows(BaseException.class,
@@ -104,7 +104,7 @@ class UserServiceImplTest {
   @DisplayName("[service] 유저 정보 변경 실패 - 없는 유저")
   void failed_update_user_NOT_FOUND_USER() {
     //given
-    given(jwtTokenUtil.getUserIdFromToken())
+    given(jwtTokenProvider.getUserIdFromToken())
         .willReturn(1L);
     given(userRepository.findById(anyLong()))
         .willReturn(Optional.empty());
@@ -119,7 +119,7 @@ class UserServiceImplTest {
   @DisplayName("[service] 유저 정보 변경 실패 - 중복된 이름")
   void failed_update_user_DUPLICATED_NAME() {
     //given
-    given(jwtTokenUtil.getUserIdFromToken())
+    given(jwtTokenProvider.getUserIdFromToken())
         .willReturn(1L);
     given(userRepository.findById(anyLong()))
         .willReturn(Optional.of(User.builder()
@@ -148,7 +148,7 @@ class UserServiceImplTest {
     //given
     BCryptPasswordEncoder passwordEncoder = new BCryptPasswordEncoder();
 
-    given(jwtTokenUtil.getUserIdFromToken())
+    given(jwtTokenProvider.getUserIdFromToken())
         .willReturn(1L);
     given(userRepository.findById(anyLong()))
         .willReturn(Optional.of(User.builder()
@@ -175,7 +175,7 @@ class UserServiceImplTest {
     //given
     BCryptPasswordEncoder passwordEncoder = new BCryptPasswordEncoder();
 
-    given(jwtTokenUtil.getUserIdFromToken())
+    given(jwtTokenProvider.getUserIdFromToken())
         .willReturn(1L);
     given(userRepository.findById(anyLong()))
         .willReturn(Optional.of(User.builder()

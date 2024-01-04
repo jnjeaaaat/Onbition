@@ -2,7 +2,7 @@ package org.jnjeaaaat.onbition.redis;
 
 import static org.junit.jupiter.api.Assertions.assertEquals;
 
-import org.jnjeaaaat.onbition.util.RedisUtil;
+import org.jnjeaaaat.onbition.config.redis.RedisService;
 import org.junit.jupiter.api.DisplayName;
 import org.junit.jupiter.api.Test;
 import org.springframework.beans.factory.annotation.Autowired;
@@ -12,7 +12,7 @@ import org.springframework.boot.test.context.SpringBootTest;
 public class RedisTest {
 
   @Autowired
-  RedisUtil redisUtil;
+  RedisService redisService;
 
   @Test
   @DisplayName("레디스 데이터 저장")
@@ -23,10 +23,10 @@ public class RedisTest {
     Long expired = 60 * 3L;
 
     //when
-    redisUtil.setDataExpire(phone, verificationCode, expired);
+    redisService.setDataExpire(phone, verificationCode, expired);
 
     //then
-    assertEquals(redisUtil.getData(phone), verificationCode);
+    assertEquals(redisService.getData(phone), verificationCode);
   }
 
 }

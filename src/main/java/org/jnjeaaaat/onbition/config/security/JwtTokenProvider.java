@@ -1,4 +1,4 @@
-package org.jnjeaaaat.onbition.util;
+package org.jnjeaaaat.onbition.config.security;
 
 import io.jsonwebtoken.Claims;
 import io.jsonwebtoken.Jws;
@@ -30,7 +30,7 @@ import org.springframework.web.context.request.ServletRequestAttributes;
 @Slf4j
 @Component
 @RequiredArgsConstructor
-public class JwtTokenUtil {
+public class JwtTokenProvider {
 
   private final UserDetailsService userDetailsService;
 

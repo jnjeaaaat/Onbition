@@ -14,7 +14,7 @@ import javax.servlet.http.HttpServletRequest;
 import javax.servlet.http.HttpServletResponse;
 import lombok.RequiredArgsConstructor;
 import lombok.extern.slf4j.Slf4j;
-import org.jnjeaaaat.onbition.util.JwtTokenUtil;
+import org.jnjeaaaat.onbition.config.security.JwtTokenProvider;
 import org.springframework.security.core.Authentication;
 import org.springframework.security.core.context.SecurityContextHolder;
 import org.springframework.stereotype.Component;
@@ -28,7 +28,7 @@ import org.springframework.web.filter.OncePerRequestFilter;
 @RequiredArgsConstructor
 public class JwtAuthenticationFilter extends OncePerRequestFilter {
 
-  private final JwtTokenUtil jwtTokenUtil;
+  private final JwtTokenProvider jwtTokenProvider;
 
   /*
   Filter 에 진입하면 실행하게 될 doFilter()
@@ -38,13 +38,13 @@ public class JwtAuthenticationFilter extends OncePerRequestFilter {
       FilterChain filterChain) throws ServletException, IOException {
 
     // 헤더로부터 accessToken 을 추출
-    String token = jwtTokenUtil.resolveToken(request);
+    String token = jwtTokenProvider.resolveToken(request);
     log.info("[doFilterInternal] token 값 추출 완료. token : {}", token);
 
     log.info("[doFilterInternal] token 값 유효성 체크 시작");
     try {
-      if (token != null && jwtTokenUtil.validateToken(token)) {  // token 이 null 인지 만료되지는 않았는지 확인
-        Authentication authentication = jwtTokenUtil.getAuthentication(token); // 만료되지 않았다면 권한 목록 추출
+      if (token != null && jwtTokenProvider.validateToken(token)) {  // token 이 null 인지 만료되지는 않았는지 확인
+        Authentication authentication = jwtTokenProvider.getAuthentication(token); // 만료되지 않았다면 권한 목록 추출
         SecurityContextHolder.getContext().setAuthentication(authentication); // SpringSecurity 에 권한 목록 넘겨줌
         log.info("[doFilterInternal] token 값 유효성 체크 완료");
       }

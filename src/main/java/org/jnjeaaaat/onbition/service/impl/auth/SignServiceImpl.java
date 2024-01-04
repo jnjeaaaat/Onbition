@@ -30,7 +30,7 @@ import org.jnjeaaaat.onbition.exception.BaseException;
 import org.jnjeaaaat.onbition.service.ImageService;
 import org.jnjeaaaat.onbition.service.SignService;
 import org.jnjeaaaat.onbition.service.TokenService;
-import org.jnjeaaaat.onbition.util.JwtTokenUtil;
+import org.jnjeaaaat.onbition.config.security.JwtTokenProvider;
 import org.springframework.security.crypto.password.PasswordEncoder;
 import org.springframework.stereotype.Service;
 import org.springframework.transaction.annotation.Transactional;
@@ -49,7 +49,7 @@ public class SignServiceImpl implements SignService {
   private final TokenService tokenService;
   private final TokenRepository tokenRepository;
   private final PasswordEncoder passwordEncoder;
-  private final JwtTokenUtil jwtTokenUtil;
+  private final JwtTokenProvider jwtTokenProvider;
 
   /*
   [회원가입]
@@ -108,14 +108,14 @@ public class SignServiceImpl implements SignService {
     }
     log.info("[signIn] 패스워드 일치 여부 확인 완료");
 
-    String accessToken = jwtTokenUtil.createAccessToken(user);
-    String refreshToken = jwtTokenUtil.createRefreshToken(user);
+    String accessToken = jwtTokenProvider.createAccessToken(user);
+    String refreshToken = jwtTokenProvider.createRefreshToken(user);
     // Token 생성
     Token token = Token.builder()
         .uid(user.getUid())
         .refreshToken(refreshToken)
         .accessToken(accessToken)
-        .expiredTime(jwtTokenUtil.getExpiration(refreshToken))
+        .expiredTime(jwtTokenProvider.getExpiration(refreshToken))
         .build();
 
     // accessToken, refreshToken Redis 에 저장
@@ -137,9 +137,9 @@ public class SignServiceImpl implements SignService {
     log.info("[logout] 로그아웃");
 
     // accessToken 추출
-    String accessToken = jwtTokenUtil.resolveToken(request);
+    String accessToken = jwtTokenProvider.resolveToken(request);
     // 토큰 남은 만료시간
-    Long expiredTime = jwtTokenUtil.getExpiration(accessToken);
+    Long expiredTime = jwtTokenProvider.getExpiration(accessToken);
 
     Token token = tokenRepository.findByAccessToken(accessToken)
         .orElseThrow(() -> new BaseException(NOT_FOUND_TOKEN));
@@ -164,7 +164,7 @@ public class SignServiceImpl implements SignService {
     log.info("[reissueToken] 토큰 재발급 시작");
 
     // accessToken 으로 Redis 에 저장되어있는 Token 정보 추출
-    Token token = tokenRepository.findByAccessToken(jwtTokenUtil.resolveToken(request))
+    Token token = tokenRepository.findByAccessToken(jwtTokenProvider.resolveToken(request))
         .orElseThrow(() -> new BaseException(NOT_FOUND_TOKEN));
 
     // refreshToken
@@ -176,7 +176,7 @@ public class SignServiceImpl implements SignService {
     }
     // refreshToken 이 만료되었을때
     try {
-      jwtTokenUtil.validateToken(refreshToken);
+      jwtTokenProvider.validateToken(refreshToken);
     } catch (ExpiredJwtException e) {
       throw new BaseException(REFRESH_TOKEN_EXPIRED_TOKEN);
     }
@@ -185,7 +185,7 @@ public class SignServiceImpl implements SignService {
         .orElseThrow(() -> new BaseException(NOT_FOUND_USER));
 
     // 새로운 accessToken 생성
-    String newAccessToken = jwtTokenUtil.createAccessToken(user);
+    String newAccessToken = jwtTokenProvider.createAccessToken(user);
 
     // 새로운 accessToken 으로 교체
     token.setAccessToken(newAccessToken);

@@ -17,7 +17,7 @@ import org.jnjeaaaat.onbition.domain.dto.paint.PaintingInputRequest;
 import org.jnjeaaaat.onbition.domain.dto.paint.PaintingInputResponse;
 import org.jnjeaaaat.onbition.domain.repository.UserRepository;
 import org.jnjeaaaat.onbition.service.impl.paint.PaintingServiceImpl;
-import org.jnjeaaaat.onbition.util.JwtTokenUtil;
+import org.jnjeaaaat.onbition.config.security.JwtTokenProvider;
 import org.junit.jupiter.api.DisplayName;
 import org.junit.jupiter.api.Test;
 import org.springframework.beans.factory.annotation.Autowired;
@@ -39,7 +39,7 @@ class PaintingControllerTest {
   private UserRepository userRepository;
 
   @MockBean
-  private JwtTokenUtil jwtTokenUtil;
+  private JwtTokenProvider jwtTokenProvider;
 
   @Autowired
   private MockMvc mockMvc;
