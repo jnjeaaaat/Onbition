@@ -4,9 +4,9 @@ import static org.jnjeaaaat.onbition.domain.dto.base.BaseStatus.SUCCESS_RESET_PA
 import static org.jnjeaaaat.onbition.domain.dto.base.BaseStatus.SUCCESS_UPDATE_PASSWORD;
 import static org.jnjeaaaat.onbition.domain.dto.base.BaseStatus.SUCCESS_UPDATE_USER;
 
+import jakarta.validation.Valid;
+import jakarta.validation.constraints.Positive;
 import java.io.IOException;
-import javax.validation.Valid;
-import javax.validation.constraints.Positive;
 import lombok.RequiredArgsConstructor;
 import lombok.extern.slf4j.Slf4j;
 import org.jnjeaaaat.onbition.domain.dto.base.BaseResponse;

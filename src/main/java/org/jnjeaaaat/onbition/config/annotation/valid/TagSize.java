@@ -1,10 +1,10 @@
 package org.jnjeaaaat.onbition.config.annotation.valid;
 
+import jakarta.validation.Constraint;
 import java.lang.annotation.ElementType;
 import java.lang.annotation.Retention;
 import java.lang.annotation.RetentionPolicy;
 import java.lang.annotation.Target;
-import javax.validation.Constraint;
 
 /**
  * 그림 태그 최대 사이즈 validation annotation

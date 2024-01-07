@@ -6,11 +6,12 @@ import static org.jnjeaaaat.onbition.domain.dto.base.BaseStatus.SUCCESS_REISSUE_
 import static org.jnjeaaaat.onbition.domain.dto.base.BaseStatus.SUCCESS_SIGN_IN;
 import static org.jnjeaaaat.onbition.domain.dto.base.BaseStatus.SUCCESS_SIGN_UP;
 
+import jakarta.servlet.http.HttpServletRequest;
+import jakarta.validation.Valid;
 import java.io.IOException;
-import javax.servlet.http.HttpServletRequest;
-import javax.validation.Valid;
 import lombok.RequiredArgsConstructor;
 import lombok.extern.slf4j.Slf4j;
+import org.jnjeaaaat.onbition.config.security.JwtTokenProvider;
 import org.jnjeaaaat.onbition.domain.dto.auth.ReissueResponse;
 import org.jnjeaaaat.onbition.domain.dto.base.BaseResponse;
 import org.jnjeaaaat.onbition.domain.dto.sign.SignInRequest;
@@ -18,7 +19,6 @@ import org.jnjeaaaat.onbition.domain.dto.sign.SignInResponse;
 import org.jnjeaaaat.onbition.domain.dto.sign.SignUpRequest;
 import org.jnjeaaaat.onbition.domain.dto.sign.SignUpResponse;
 import org.jnjeaaaat.onbition.service.SignService;
-import org.jnjeaaaat.onbition.config.security.JwtTokenProvider;
 import org.springframework.http.MediaType;
 import org.springframework.web.bind.annotation.GetMapping;
 import org.springframework.web.bind.annotation.PostMapping;
@@ -66,7 +66,7 @@ public class SignController {
   Request: uid, password
   Response: user PK, uid, role List, accessToken
    */
-  @PostMapping("/sign-in")
+  @PostMapping(value = "/sign-in")
   public BaseResponse<SignInResponse> signIn(
       @Valid @RequestBody SignInRequest request,
       HttpServletRequest httpServletRequest) {

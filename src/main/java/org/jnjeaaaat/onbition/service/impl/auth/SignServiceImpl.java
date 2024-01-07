@@ -10,11 +10,12 @@ import static org.jnjeaaaat.onbition.domain.dto.base.BaseStatus.REFRESH_TOKEN_EX
 import static org.jnjeaaaat.onbition.domain.dto.base.BaseStatus.UN_MATCH_PASSWORD;
 
 import io.jsonwebtoken.ExpiredJwtException;
+import jakarta.servlet.http.HttpServletRequest;
 import java.io.IOException;
 import java.util.Collections;
-import javax.servlet.http.HttpServletRequest;
 import lombok.RequiredArgsConstructor;
 import lombok.extern.slf4j.Slf4j;
+import org.jnjeaaaat.onbition.config.security.JwtTokenProvider;
 import org.jnjeaaaat.onbition.domain.dto.auth.ReissueResponse;
 import org.jnjeaaaat.onbition.domain.dto.file.FileFolder;
 import org.jnjeaaaat.onbition.domain.dto.sign.SignInRequest;
@@ -30,7 +31,6 @@ import org.jnjeaaaat.onbition.exception.BaseException;
 import org.jnjeaaaat.onbition.service.ImageService;
 import org.jnjeaaaat.onbition.service.SignService;
 import org.jnjeaaaat.onbition.service.TokenService;
-import org.jnjeaaaat.onbition.config.security.JwtTokenProvider;
 import org.springframework.security.crypto.password.PasswordEncoder;
 import org.springframework.stereotype.Service;
 import org.springframework.transaction.annotation.Transactional;

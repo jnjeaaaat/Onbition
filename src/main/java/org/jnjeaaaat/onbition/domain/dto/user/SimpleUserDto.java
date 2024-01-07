@@ -21,7 +21,6 @@ public class SimpleUserDto {
   private String profileImgUrl;
   private String uid;
   private String name;
-  private String phone;
 
   public static SimpleUserDto from(User user) {
     return SimpleUserDto.builder()
@@ -29,7 +28,6 @@ public class SimpleUserDto {
         .profileImgUrl(user.getProfileImgUrl())
         .uid(user.getUid())
         .name(user.getName())
-        .phone(user.getPhone())
         .build();
   }
 

@@ -1,8 +1,8 @@
 package org.jnjeaaaat.onbition.config.annotation.valid;
 
+import jakarta.validation.ConstraintValidator;
+import jakarta.validation.ConstraintValidatorContext;
 import java.util.Set;
-import javax.validation.ConstraintValidator;
-import javax.validation.ConstraintValidatorContext;
 
 /**
  * 그림 태그 최대사이즈 annotation 구현체 class

@@ -64,6 +64,7 @@ public enum BaseStatus {
 
   // painting
   UNDER_MIN_PRICE(false, BAD_REQUEST.value(), "판매되는 그림의 가격은 1000원 이상이어야 합니다."),
+  NOT_FOUND_PAINTING(false, BAD_REQUEST.value(), "해당 그림이 없습니다."),
 
 
   // file

@@ -1,8 +1,7 @@
 package org.jnjeaaaat.onbition.config.annotation.valid;
 
-import javax.validation.ConstraintValidator;
-import javax.validation.ConstraintValidatorContext;
-import org.jnjeaaaat.onbition.config.annotation.valid.Telephone;
+import jakarta.validation.ConstraintValidator;
+import jakarta.validation.ConstraintValidatorContext;
 
 /**
  * @Telephone 어노테이션 구현체

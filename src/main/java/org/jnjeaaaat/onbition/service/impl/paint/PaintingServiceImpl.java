@@ -4,20 +4,24 @@ import static org.jnjeaaaat.onbition.domain.dto.base.BaseStatus.NOT_FOUND_USER;
 import static org.jnjeaaaat.onbition.domain.dto.base.BaseStatus.UNDER_MIN_PRICE;
 
 import java.io.IOException;
+import java.util.List;
+import java.util.stream.Collectors;
+import java.util.stream.Stream;
 import lombok.RequiredArgsConstructor;
 import lombok.extern.slf4j.Slf4j;
 import org.jnjeaaaat.onbition.domain.dto.file.FileFolder;
 import org.jnjeaaaat.onbition.domain.dto.paint.PaintingInputRequest;
 import org.jnjeaaaat.onbition.domain.dto.paint.PaintingInputResponse;
+import org.jnjeaaaat.onbition.domain.entity.ElasticSearchPainting;
 import org.jnjeaaaat.onbition.domain.entity.Painting;
 import org.jnjeaaaat.onbition.domain.entity.User;
+import org.jnjeaaaat.onbition.domain.repository.ElasticSearchPaintingRepository;
 import org.jnjeaaaat.onbition.domain.repository.PaintingRepository;
 import org.jnjeaaaat.onbition.domain.repository.UserRepository;
 import org.jnjeaaaat.onbition.exception.BaseException;
 import org.jnjeaaaat.onbition.service.ImageService;
 import org.jnjeaaaat.onbition.service.PaintingService;
 import org.springframework.stereotype.Service;
-import org.springframework.transaction.annotation.Transactional;
 import org.springframework.web.multipart.MultipartFile;
 
 /**
@@ -28,9 +32,13 @@ import org.springframework.web.multipart.MultipartFile;
 @RequiredArgsConstructor
 public class PaintingServiceImpl implements PaintingService {
 
+  private final ImageService imageService;
+
   private final UserRepository userRepository;
   private final PaintingRepository paintingRepository;
-  private final ImageService imageService;
+  private final PaintingSearchServiceImpl paintingSearchService;
+  private final ElasticSearchPaintingRepository elasticSearchPaintingRepository;
+
 
   private final String DREAMER = "ROLE_DREAMER";
 
@@ -40,7 +48,6 @@ public class PaintingServiceImpl implements PaintingService {
   Response: 등록하는 유저, 등록하는 그림 이미지, 제목, 설명, 판매여부, 경매가, 매매가, 태그 리스트, 등록한 시간
    */
   @Override
-  @Transactional
   public PaintingInputResponse createPainting(String uid, MultipartFile image,
       PaintingInputRequest request) throws IOException {
 
@@ -50,7 +57,8 @@ public class PaintingServiceImpl implements PaintingService {
         .orElseThrow(() -> new BaseException(NOT_FOUND_USER));
 
     // isSale이 true인데 가격이 1000원 미만일때
-    if (request.getIsSale() && (request.getAuctionPrice() < 1000L || request.getSalePrice() < 1000L)) {
+    if (request.getIsSale() && (request.getAuctionPrice() < 1000L
+        || request.getSalePrice() < 1000L)) {
       throw new BaseException(UNDER_MIN_PRICE);
     }
 
@@ -60,17 +68,32 @@ public class PaintingServiceImpl implements PaintingService {
     // 사진 저장 후 url 가져오기
     String imageUrl = imageService.saveImage(image, FileFolder.PAINT_IMAGE);
 
-    return PaintingInputResponse.from(
-        paintingRepository.save(Painting.builder()
-            .user(user)
-            .paintingImgUrl(imageUrl)
-            .title(request.getTitle())
-            .description(request.getDescription())
-            .isSale(request.getIsSale())
-            .auctionPrice(request.getAuctionPrice())
-            .salePrice(request.getSalePrice())
-            .tags(request.getTags())
-            .build())
-    );
+    Painting painting = Painting.builder()
+        .user(user)
+        .paintingImgUrl(imageUrl)
+        .title(request.getTitle())
+        .description(request.getDescription())
+        .isSale(request.getIsSale())
+        .auctionPrice(request.getAuctionPrice())
+        .salePrice(request.getSalePrice())
+        .tags(request.getTags())
+        .build();
+
+    Painting savedPainting = paintingRepository.save(painting);
+
+    // ES에 저장
+    log.info("[createPainting] ES 저장 시작");
+
+    elasticSearchPaintingRepository.save(ElasticSearchPainting.from(savedPainting));
+    log.info("[createPainting] ES 저장 끝");
+
+    return PaintingInputResponse.from(savedPainting);
   }
+
+//  @Override
+//  public PaintingDetailResponse getPainting(String uid, Long paintingId) {
+//
+//    return PaintingDetailResponse.from(esPaintingRepository.findById(paintingId)
+//        .orElseThrow(() -> new BaseException(NOT_FOUND_PAINTING)));
+//  }
 }

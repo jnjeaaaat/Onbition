@@ -2,26 +2,25 @@ package org.jnjeaaaat.onbition.domain.entity;
 
 import com.fasterxml.jackson.annotation.JsonProperty;
 import com.fasterxml.jackson.annotation.JsonProperty.Access;
-import com.vladmihalcea.hibernate.type.json.JsonType;
+import jakarta.persistence.CascadeType;
+import jakarta.persistence.Column;
+import jakarta.persistence.Entity;
+import jakarta.persistence.GeneratedValue;
+import jakarta.persistence.GenerationType;
+import jakarta.persistence.Id;
+import jakarta.persistence.OneToMany;
 import java.time.LocalDateTime;
 import java.util.ArrayList;
 import java.util.HashSet;
 import java.util.List;
 import java.util.Set;
-import javax.persistence.CascadeType;
-import javax.persistence.Column;
-import javax.persistence.Entity;
-import javax.persistence.GeneratedValue;
-import javax.persistence.GenerationType;
-import javax.persistence.Id;
-import javax.persistence.OneToMany;
 import lombok.AllArgsConstructor;
 import lombok.Builder;
 import lombok.Getter;
 import lombok.NoArgsConstructor;
 import lombok.Setter;
-import org.hibernate.annotations.Type;
-import org.hibernate.annotations.TypeDef;
+import org.hibernate.annotations.JdbcTypeCode;
+import org.hibernate.type.SqlTypes;
 
 /**
  * SpringSecurity UserDetails 구현하는 User Entity
@@ -32,11 +31,6 @@ import org.hibernate.annotations.TypeDef;
 @AllArgsConstructor
 @Builder
 @Entity
-@TypeDef(name = "json", typeClass = JsonType.class)
-/*
- type name(식별자라고 이해하면됨) 을 "json"으로 지정
- "json" -> JsonType.class 로 지정하라는 뜻.
- */
 public class User extends BaseEntity {
 
   @Id
@@ -68,8 +62,8 @@ public class User extends BaseEntity {
   @Column
   private LocalDateTime deletedAt;  // 유저 삭제 일자
 
-  @Type(type = "json") // TypeDef 를 통해 선언한 "json" Type 적용
-  @Column(columnDefinition = "json") // MySQL column 도 "json" 적용
+  @JdbcTypeCode(SqlTypes.JSON) // JSON 타입으로 저장
+  @Column(nullable = false)
   @Builder.Default
   private Set<String> roles = new HashSet<>(); // 유저 권한 리스트
 

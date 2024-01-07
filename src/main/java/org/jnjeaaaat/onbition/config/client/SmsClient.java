@@ -1,6 +1,6 @@
 package org.jnjeaaaat.onbition.config.client;
 
-import javax.annotation.PostConstruct;
+import jakarta.annotation.PostConstruct;
 import lombok.Data;
 import lombok.extern.slf4j.Slf4j;
 import net.nurigo.sdk.NurigoApp;

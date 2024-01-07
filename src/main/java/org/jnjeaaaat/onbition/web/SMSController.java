@@ -3,7 +3,7 @@ package org.jnjeaaaat.onbition.web;
 import static org.jnjeaaaat.onbition.domain.dto.base.BaseStatus.SUCCESS_AUTH_TEXT;
 import static org.jnjeaaaat.onbition.domain.dto.base.BaseStatus.SUCCESS_SEND_TEXT;
 
-import javax.validation.constraints.NotBlank;
+import jakarta.validation.constraints.NotBlank;
 import lombok.RequiredArgsConstructor;
 import lombok.extern.slf4j.Slf4j;
 import org.jnjeaaaat.onbition.config.annotation.valid.Telephone;

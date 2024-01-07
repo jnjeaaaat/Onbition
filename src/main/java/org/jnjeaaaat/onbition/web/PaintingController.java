@@ -2,8 +2,8 @@ package org.jnjeaaaat.onbition.web;
 
 import static org.jnjeaaaat.onbition.domain.dto.base.BaseStatus.SUCCESS_CREATE_PAINTING;
 
+import jakarta.validation.Valid;
 import java.io.IOException;
-import javax.validation.Valid;
 import lombok.RequiredArgsConstructor;
 import lombok.extern.slf4j.Slf4j;
 import org.jnjeaaaat.onbition.config.annotation.AuthUser;
@@ -50,5 +50,19 @@ public class PaintingController {
     );
 
   }
+
+//  @GetMapping("/{paintingId}")
+//  public BaseResponse<PaintingDetailResponse> getPainting(
+//      @AuthUser UserDetails userDetails,
+//      @PathVariable Long paintingId) {
+//
+//    log.info("[getPainting] 그림 하나 조회 요청");
+//
+//    return BaseResponse.success(
+//        SUCCESS,
+//        paintingService.getPainting(userDetails.getUsername(), paintingId)
+//    );
+//  }
+
 
 }

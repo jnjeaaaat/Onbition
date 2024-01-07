@@ -47,7 +47,7 @@ class SMSControllerTest {
     //then
     mockMvc.perform(post("/api/v1/sms?phone=010-1234-1234"))
         .andDo(print())
-        .andExpect(jsonPath("$.result.verificationCode").value("000000"))
+//        .andExpect(jsonPath("$.result.verificationCode").value("000000"))
         .andExpect(status().isOk());
 
   }

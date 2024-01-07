@@ -1,15 +1,17 @@
 package org.jnjeaaaat.onbition.config.security;
 
-import com.fasterxml.jackson.databind.ObjectMapper;
 import lombok.RequiredArgsConstructor;
 import lombok.extern.slf4j.Slf4j;
 import org.jnjeaaaat.onbition.config.filter.CustomAccessDeniedHandler;
 import org.jnjeaaaat.onbition.config.filter.CustomAuthenticationEntryPoint;
 import org.jnjeaaaat.onbition.config.filter.JwtAuthenticationFilter;
+import org.springframework.context.annotation.Bean;
 import org.springframework.context.annotation.Configuration;
 import org.springframework.security.config.annotation.web.builders.HttpSecurity;
-import org.springframework.security.config.annotation.web.configuration.WebSecurityConfigurerAdapter;
+import org.springframework.security.config.annotation.web.configuration.EnableWebSecurity;
+import org.springframework.security.config.annotation.web.configurers.AbstractHttpConfigurer;
 import org.springframework.security.config.http.SessionCreationPolicy;
+import org.springframework.security.web.SecurityFilterChain;
 import org.springframework.security.web.authentication.UsernamePasswordAuthenticationFilter;
 
 /**
@@ -17,52 +19,53 @@ import org.springframework.security.web.authentication.UsernamePasswordAuthentic
  */
 @Slf4j
 @Configuration
+@EnableWebSecurity
 @RequiredArgsConstructor
-public class SecurityConfig extends WebSecurityConfigurerAdapter {
+public class SecurityConfig {
 
-  private final JwtTokenProvider jwtTokenProvider;
-  private final ObjectMapper objectMapper;
+  private final JwtAuthenticationFilter jwtAuthenticationFilter;
+  private final CustomAccessDeniedHandler customAccessDeniedHandler;
+  private final CustomAuthenticationEntryPoint customAuthenticationEntryPoint;
 
-  @Override
-  protected void configure(HttpSecurity httpSecurity) throws Exception {
+  @Bean
+  protected SecurityFilterChain filterChain(HttpSecurity httpSecurity) throws Exception {
     log.info("[configure] Security configure start");
-    httpSecurity.httpBasic().disable()
+    return httpSecurity.httpBasic(AbstractHttpConfigurer::disable)
 
-        .csrf().disable()
+        .csrf(AbstractHttpConfigurer::disable)
 
-        .sessionManagement()
-        .sessionCreationPolicy(
-            SessionCreationPolicy.STATELESS
+        .sessionManagement(
+            session -> session.sessionCreationPolicy(SessionCreationPolicy.STATELESS))
+
+        .authorizeHttpRequests(authorize -> authorize
+            .requestMatchers(
+                "/api/v1/sign-up",
+                "/api/v1/sign-in",
+                "/api/v1/re-token",
+                "/api/v1/reset",
+                "/api/v1/sms/**"
+            ).permitAll()
+
+            .anyRequest().authenticated()
         )
-
-        .and()
-        .authorizeRequests()
-        .antMatchers("/**/sign-up").permitAll()
-        .antMatchers("/**/sign-in").permitAll()
-        .antMatchers("/**/re-token").permitAll()
-        .antMatchers("/**/reset").permitAll()
-        .antMatchers("/**/sms/**").permitAll()
-
-        .anyRequest().hasAnyRole("VIEWER")
 
         /*
         hasRole, hasAnyRole 로 권한을 걸어줘야 exceptionHandling 에서 걸러내고
         CustomAuthenticationEntryPoint 클래스에서 처리할 수 있음
          */
-        .and()
         // 유저 권한 예외처리
-        .exceptionHandling().accessDeniedHandler(new CustomAccessDeniedHandler(objectMapper))
-        .and()
-        // 토큰값에 대한 예외처리
-        .exceptionHandling().authenticationEntryPoint(new CustomAuthenticationEntryPoint(objectMapper))
+        .exceptionHandling(configurer -> {
+          configurer.authenticationEntryPoint(customAuthenticationEntryPoint);
+          configurer.accessDeniedHandler(customAccessDeniedHandler);
+        })
 
-        .and()
         .addFilterBefore(
             // uid, password, role 으로 유저 정보 처리 필터 전에
             // token 값에 대한 유효처리 필터부터 실행하라는 의미
-            new JwtAuthenticationFilter(jwtTokenProvider),
+            jwtAuthenticationFilter,
             UsernamePasswordAuthenticationFilter.class)
-    ;
+        .build()
+        ;
   }
 
 }

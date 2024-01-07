@@ -14,4 +14,7 @@ public interface PaintingService {
   PaintingInputResponse createPainting(String uid, MultipartFile image, PaintingInputRequest request)
       throws IOException;
 
+  // 그림 하나 조회
+//  PaintingDetailResponse getPainting(String uid, Long paintingId);
+
 }

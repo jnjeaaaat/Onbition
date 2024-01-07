@@ -1,7 +1,7 @@
 package org.jnjeaaaat.onbition.exception;
 
+import jakarta.servlet.http.HttpServletRequest;
 import java.util.List;
-import javax.servlet.http.HttpServletRequest;
 import lombok.extern.slf4j.Slf4j;
 import org.jnjeaaaat.onbition.domain.dto.base.BaseResponse;
 import org.springframework.http.HttpStatus;
@@ -66,7 +66,7 @@ public class GlobalExceptionHandler {
   public ResponseEntity<BaseResponse> handleRuntimeException(
       RuntimeException e, HttpServletRequest request) {
 
-    log.error("[RuntimeException] {} is occurred. uri:{}", e.getMessage(), request.getRequestURI());
+    log.error("[{}] {} is occurred. uri:{}", e.getClass(), e.getMessage(), request.getRequestURI());
 
     return ResponseEntity
         .badRequest()

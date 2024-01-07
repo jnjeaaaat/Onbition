@@ -1,23 +1,22 @@
 package org.jnjeaaaat.onbition.domain.entity;
 
-import com.vladmihalcea.hibernate.type.json.JsonType;
+import jakarta.persistence.Column;
+import jakarta.persistence.Entity;
+import jakarta.persistence.FetchType;
+import jakarta.persistence.GeneratedValue;
+import jakarta.persistence.GenerationType;
+import jakarta.persistence.Id;
+import jakarta.persistence.JoinColumn;
+import jakarta.persistence.ManyToOne;
 import java.util.HashSet;
 import java.util.Set;
-import javax.persistence.Column;
-import javax.persistence.Entity;
-import javax.persistence.FetchType;
-import javax.persistence.GeneratedValue;
-import javax.persistence.GenerationType;
-import javax.persistence.Id;
-import javax.persistence.JoinColumn;
-import javax.persistence.ManyToOne;
 import lombok.AllArgsConstructor;
 import lombok.Builder;
 import lombok.Getter;
 import lombok.NoArgsConstructor;
 import lombok.Setter;
-import org.hibernate.annotations.Type;
-import org.hibernate.annotations.TypeDef;
+import org.hibernate.annotations.JdbcTypeCode;
+import org.hibernate.type.SqlTypes;
 
 /**
  * Painting Entity Class
@@ -28,11 +27,6 @@ import org.hibernate.annotations.TypeDef;
 @AllArgsConstructor
 @Builder
 @Entity
-@TypeDef(name = "json", typeClass = JsonType.class)
-/*
- type name(식별자라고 이해하면됨) 을 "json"으로 지정
- "json" -> JsonType.class 로 지정하라는 뜻.
- */
 public class Painting extends BaseEntity {
 
   @Id
@@ -61,8 +55,8 @@ public class Painting extends BaseEntity {
   @Column(nullable = false)
   private Long salePrice;   // 매매 가격
 
-  @Type(type = "json")
-  @Column(columnDefinition = "json")
+  @JdbcTypeCode(SqlTypes.JSON)   // JSON 타입으로 지정
+  @Column(nullable = false)
   @Builder.Default
   private Set<String> tags = new HashSet<>();    // tags 리스트
 
