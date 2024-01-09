@@ -3,15 +3,20 @@ package org.jnjeaaaat.onbition.service.impl.paint;
 import static org.jnjeaaaat.onbition.domain.dto.base.BaseStatus.NOT_FOUND_PAINTING;
 import static org.jnjeaaaat.onbition.domain.dto.base.BaseStatus.NOT_FOUND_USER;
 import static org.jnjeaaaat.onbition.domain.dto.base.BaseStatus.UNDER_MIN_PRICE;
+import static org.jnjeaaaat.onbition.domain.dto.base.BaseStatus.UN_MATCH_USER;
 import static org.jnjeaaaat.onbition.domain.dto.base.BaseStatus.WRONG_PRICE_RANGE;
 
 import java.io.IOException;
+import java.util.Objects;
+import java.util.Set;
 import lombok.RequiredArgsConstructor;
 import lombok.extern.slf4j.Slf4j;
 import org.jnjeaaaat.onbition.domain.dto.file.FileFolder;
 import org.jnjeaaaat.onbition.domain.dto.page.OnlySalePageDto;
 import org.jnjeaaaat.onbition.domain.dto.paint.PaintingInputRequest;
 import org.jnjeaaaat.onbition.domain.dto.paint.PaintingInputResponse;
+import org.jnjeaaaat.onbition.domain.dto.paint.PaintingModifyPriceRequest;
+import org.jnjeaaaat.onbition.domain.dto.paint.PaintingModifyTagsRequest;
 import org.jnjeaaaat.onbition.domain.entity.ElasticSearchPainting;
 import org.jnjeaaaat.onbition.domain.entity.Painting;
 import org.jnjeaaaat.onbition.domain.entity.User;
@@ -24,6 +29,7 @@ import org.jnjeaaaat.onbition.service.PaintingService;
 import org.springframework.data.domain.Pageable;
 import org.springframework.data.domain.Slice;
 import org.springframework.stereotype.Service;
+import org.springframework.transaction.annotation.Transactional;
 import org.springframework.web.multipart.MultipartFile;
 
 /**
@@ -45,7 +51,7 @@ public class PaintingServiceImpl implements PaintingService {
   /*
   [그림 등록]
   Request: 등록하는 유저, 등록하는 그림 이미지, 제목, 설명, 판매여부, 경매가, 매매가, 태그 리스트
-  Response: 등록하는 유저, 등록하는 그림 이미지, 제목, 설명, 판매여부, 경매가, 매매가, 태그 리스트, 등록한 시간
+  Response: 등록하는 유저, 등록하는 그림 이미지, 제목, 설명, 판매여부, 경매가, 매매가, 태그 리스트, 등록한 시간, 변경 시간
    */
   @Override
   public PaintingInputResponse createPainting(String uid, MultipartFile image,
@@ -96,6 +102,7 @@ public class PaintingServiceImpl implements PaintingService {
    */
   @Override
   public ElasticSearchPainting getPainting(String uid, Long paintingId) {
+    log.info("[getPainting] 그림 하나 조회");
 
     return elasticSearchPaintingRepository.findById(
             paintingId)
@@ -142,6 +149,100 @@ public class PaintingServiceImpl implements PaintingService {
     return elasticSearchPaintingRepository.findByTitleAndSalePriceBetween(
         keyword, minPrice, maxPrice, pageable
     );
+
+  }
+
+  /*
+  [그림 태그 변경]
+  Request: user id, painting PK, Set tag
+  Response: 등록하는 유저, 등록하는 그림 이미지, 제목, 설명, 판매여부, 경매가, 매매가, 태그 리스트, 등록한 시간, 변경 시간
+   */
+  @Override
+  @Transactional
+  public PaintingInputResponse updatePaintingTags(String uid, Long paintingId,
+      PaintingModifyTagsRequest request) {
+    log.info("[updatePaintingTags] 그림 정보 수정");
+    Painting painting = paintingRepository.findById(paintingId)
+        .orElseThrow(() -> new BaseException(NOT_FOUND_PAINTING));
+
+    // 그림의 소유주와 접근 유저가 다를때
+    if (!Objects.equals(uid, painting.getUser().getUid())) {
+      throw new BaseException(UN_MATCH_USER);
+    }
+
+    // 원래 태그랑 다를때만 수정
+    if (!painting.getTags().equals(request.getTags())) {
+      log.info("[updatePaintingTags] tag 변경");
+      updateTag(painting, request.getTags());
+    }
+
+    return PaintingInputResponse.from(painting);
+  }
+
+  /*
+  [그림 판매 시작]
+  Request: user id, painting PK, auctionPrice, salePrice
+  Response: 등록하는 유저, 등록하는 그림 이미지, 제목, 설명, 판매여부, 경매가, 매매가, 태그 리스트, 등록한 시간, 변경 시간
+   */
+  @Override
+  @Transactional
+  public PaintingInputResponse convertPaintingToSale(String uid, Long paintingId,
+      PaintingModifyPriceRequest request) {
+
+    log.info("[convertPaintingToSale] 그림 판매 시작");
+    Painting painting = paintingRepository.findById(paintingId)
+        .orElseThrow(() -> new BaseException(NOT_FOUND_PAINTING));
+
+    // 그림의 소유주와 접근 유저가 다를때
+    if (!Objects.equals(uid, painting.getUser().getUid())) {
+      throw new BaseException(UN_MATCH_USER);
+    }
+
+    // 가격이 1000원 보다 낮을때
+    if (request.getAuctionPrice() < 1000L || request.getSalePrice() < 1000L) {
+      throw new BaseException(UNDER_MIN_PRICE);
+    }
+
+    if (!painting.getIsSale()) {
+      log.info("[convertPaintingToSale] 가격 변경");
+      updatePrice(painting, request);
+    }
+
+    return PaintingInputResponse.from(painting);
+  }
+
+  // 그림 태그 변경 method
+  private void updateTag(Painting painting, Set<String> tags) {
+    log.info("[updateTag] db tag 변경 시작");
+    painting.setTags(tags);
+    log.info("[updateTag] db tag 변경 완료");
+
+    ElasticSearchPainting esPainting = elasticSearchPaintingRepository.findById(painting.getId())
+        .orElseThrow(() -> new BaseException(NOT_FOUND_PAINTING));
+
+    log.info("[updateTag] es tag 변경 시작");
+    esPainting.setTags(tags);
+    elasticSearchPaintingRepository.save(esPainting);
+    log.info("[updateTag] es tag 변경 완료");
+  }
+
+  // 그림 판매여부, 가격 변경 method
+  private void updatePrice(Painting painting, PaintingModifyPriceRequest request) {
+    log.info("[updatePrice] db price 변경 시작");
+    painting.setIsSale(true);
+    painting.setAuctionPrice(request.getAuctionPrice());
+    painting.setSalePrice(request.getSalePrice());
+    log.info("[updatePrice] db price 변경 완료");
+
+    ElasticSearchPainting esPainting = elasticSearchPaintingRepository.findById(painting.getId())
+        .orElseThrow(() -> new BaseException(NOT_FOUND_PAINTING));
+
+    log.info("[updateTag] es tag 변경 시작");
+    esPainting.setIsSale(true);
+    esPainting.setAuctionPrice(request.getAuctionPrice());
+    esPainting.setSalePrice(request.getSalePrice());
+    elasticSearchPaintingRepository.save(esPainting);
+    log.info("[updateTag] es tag 변경 완료");
 
   }
 

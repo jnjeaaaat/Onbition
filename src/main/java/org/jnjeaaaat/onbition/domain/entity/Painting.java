@@ -47,7 +47,7 @@ public class Painting extends BaseEntity {
   private String description;  // 그림 설명
 
   @Column(nullable = false)
-  private boolean isSale;     // 그림 판매 여부
+  private Boolean isSale;     // 그림 판매 여부
 
   @Column(nullable = false)
   private Long auctionPrice;    // 경매 시작 가격

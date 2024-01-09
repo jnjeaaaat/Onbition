@@ -7,6 +7,7 @@ import lombok.AllArgsConstructor;
 import lombok.Builder;
 import lombok.Getter;
 import lombok.NoArgsConstructor;
+import lombok.Setter;
 import lombok.extern.slf4j.Slf4j;
 import org.jnjeaaaat.onbition.domain.dto.user.SimpleUserDto;
 import org.springframework.data.elasticsearch.annotations.DateFormat;
@@ -24,6 +25,7 @@ import org.springframework.data.elasticsearch.annotations.WriteTypeHint;
 @Setting(settingPath = "/elasticsearch/painting-setting.json")
 @Mapping(mappingPath = "/elasticsearch/painting-mapping.json")
 @Getter
+@Setter
 @NoArgsConstructor
 @AllArgsConstructor
 @Builder
@@ -67,7 +69,7 @@ public class ElasticSearchPainting {
         .paintingImgUrl(painting.getPaintingImgUrl())
         .title(painting.getTitle())
         .description(painting.getDescription())
-        .isSale(painting.isSale())
+        .isSale(painting.getIsSale())
         .auctionPrice(painting.getAuctionPrice())
         .salePrice(painting.getSalePrice())
         .tags(painting.getTags())
