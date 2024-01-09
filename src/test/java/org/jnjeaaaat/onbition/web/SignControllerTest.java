@@ -12,6 +12,7 @@ import static org.springframework.test.web.servlet.result.MockMvcResultMatchers.
 import com.fasterxml.jackson.databind.ObjectMapper;
 import java.nio.charset.StandardCharsets;
 import java.util.Set;
+import org.jnjeaaaat.onbition.config.WithCustomMockUser;
 import org.jnjeaaaat.onbition.domain.dto.auth.ReissueResponse;
 import org.jnjeaaaat.onbition.domain.dto.sign.SignInRequest;
 import org.jnjeaaaat.onbition.domain.dto.sign.SignInResponse;
@@ -47,6 +48,7 @@ class SignControllerTest {
 
 
   @Test
+  @WithCustomMockUser
   @DisplayName("[controller] 회원가입 성공")
   void success_register() throws Exception {
     //given
@@ -103,6 +105,7 @@ class SignControllerTest {
   }
 
   @Test
+  @WithCustomMockUser
   @DisplayName("[controller] 로그인 성공")
   void success_signIn() throws Exception {
     //given
@@ -121,7 +124,9 @@ class SignControllerTest {
             .contentType(MediaType.APPLICATION_JSON)
             .content(objectMapper.writeValueAsString(
                 new SignInRequest("testUid", "password")
-            )))
+            ))
+            .characterEncoding("UTF-8")
+            .with(csrf()))
         .andExpect(jsonPath("$.result.uid").value("testUid"))
         .andExpect(jsonPath("$.result.roles[0]").value("ROLE_VIEWER"))
         .andExpect(jsonPath("$.result.accessToken").value("testAccessToken"))
@@ -131,6 +136,7 @@ class SignControllerTest {
   }
 
   @Test
+  @WithCustomMockUser
   @DisplayName("[controller] 토큰 재발급 성공")
   void reissue_token() throws Exception {
     //given
@@ -141,8 +147,9 @@ class SignControllerTest {
     //when
     //then
     mockMvc.perform(post("/api/v1/re-token")
-        .header("X-AUTH-TOKEN", "testAccessToken")
-        .header("refreshToken", "testRefreshToken"))
+            .header("X-AUTH-TOKEN", "testAccessToken")
+            .header("refreshToken", "testRefreshToken")
+            .with(csrf()))
         .andExpect(jsonPath("$.result.accessToken").value("testNewAccessToken"))
         .andExpect(status().isOk())
         .andDo(print());
