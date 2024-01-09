@@ -1,8 +1,12 @@
 package org.jnjeaaaat.onbition.service;
 
 import java.io.IOException;
+import org.jnjeaaaat.onbition.domain.dto.page.OnlySalePageDto;
 import org.jnjeaaaat.onbition.domain.dto.paint.PaintingInputRequest;
 import org.jnjeaaaat.onbition.domain.dto.paint.PaintingInputResponse;
+import org.jnjeaaaat.onbition.domain.entity.ElasticSearchPainting;
+import org.springframework.data.domain.Pageable;
+import org.springframework.data.domain.Slice;
 import org.springframework.web.multipart.MultipartFile;
 
 /**
@@ -15,6 +19,10 @@ public interface PaintingService {
       throws IOException;
 
   // 그림 하나 조회
-//  PaintingDetailResponse getPainting(String uid, Long paintingId);
+  ElasticSearchPainting getPainting(String uid, Long paintingId);
+
+  // 제목으로 검색
+  Slice<ElasticSearchPainting> searchPaintings(String keyword, Pageable pageable, OnlySalePageDto onlySalePageDto);
+
 
 }
