@@ -50,10 +50,7 @@ public class Painting extends BaseEntity {
   private Boolean isSale;     // 그림 판매 여부
 
   @Column(nullable = false)
-  private Long auctionPrice;    // 경매 시작 가격
-
-  @Column(nullable = false)
-  private Long salePrice;   // 매매 가격
+  private Long price;   // 매매 가격
 
   @JdbcTypeCode(SqlTypes.JSON)   // JSON 타입으로 지정
   @Column(nullable = false)

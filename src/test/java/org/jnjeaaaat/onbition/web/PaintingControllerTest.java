@@ -78,8 +78,7 @@ class PaintingControllerTest {
             .description("testDescription")
             .tags(tagSet)
             .isSale(true)
-            .auctionPrice(1000L)
-            .salePrice(1000L)
+            .price(1000L)
             .build();
 
     String valueAsString = objectMapper.writeValueAsString(request);
@@ -118,8 +117,7 @@ class PaintingControllerTest {
             .title("testTitle")
             .description("testDescription")
             .isSale(false)
-            .auctionPrice(0L)
-            .salePrice(0L)
+            .price(0L)
             .tags(Set.of("tag1", "tag2"))
             .build());
     //when
@@ -176,15 +174,13 @@ class PaintingControllerTest {
             .title("testTitle")
             .description("testDescription")
             .isSale(true)
-            .auctionPrice(10000L)
-            .salePrice(10000L)
+            .price(10000L)
             .build());
 
     // request builder
     PaintingModifyPriceRequest request =
         PaintingModifyPriceRequest.builder()
-            .auctionPrice(10000L)
-            .salePrice(10000L)
+            .price(10000L)
             .build();
 
     String valueAsString = objectMapper.writeValueAsString(request);

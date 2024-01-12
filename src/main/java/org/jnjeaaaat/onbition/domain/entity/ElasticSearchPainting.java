@@ -48,11 +48,8 @@ public class ElasticSearchPainting {
   @Field(type = FieldType.Boolean, name = "isSale")
   private Boolean isSale;     // 그림 판매 여부
 
-  @Field(type = FieldType.Long, name = "auctionPrice")
-  private Long auctionPrice;    // 경매 시작 가격
-
-  @Field(type = FieldType.Long, name = "salePrice")
-  private Long salePrice;   // 매매 가격
+  @Field(type = FieldType.Long, name = "price")
+  private Long price;   // 매매 가격
 
   @Field(type = FieldType.Text, name = "tags")
   private Set<String> tags;  // 그림 태그
@@ -70,8 +67,7 @@ public class ElasticSearchPainting {
         .title(painting.getTitle())
         .description(painting.getDescription())
         .isSale(painting.getIsSale())
-        .auctionPrice(painting.getAuctionPrice())
-        .salePrice(painting.getSalePrice())
+        .price(painting.getPrice())
         .tags(painting.getTags())
         .createdAt(painting.getCreatedAt())
         .updatedAt(painting.getUpdatedAt())

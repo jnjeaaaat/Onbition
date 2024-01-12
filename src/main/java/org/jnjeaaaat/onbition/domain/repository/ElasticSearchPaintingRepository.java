@@ -20,7 +20,7 @@ public interface ElasticSearchPaintingRepository extends
   Page<ElasticSearchPainting> findByTitleAndIsSaleTrue(String title, Pageable pageable);
 
   // 제목으로 검색 (판매중인 그림 가격 범위 설정)
-  Page<ElasticSearchPainting> findByTitleAndSalePriceBetween(String title, Long minPrice,
+  Page<ElasticSearchPainting> findByTitleAndPriceBetween(String title, Long minPrice,
       Long maxPrice, Pageable pageable);
 
 }

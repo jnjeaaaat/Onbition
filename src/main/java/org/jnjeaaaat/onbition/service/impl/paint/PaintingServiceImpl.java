@@ -20,6 +20,7 @@ import org.jnjeaaaat.onbition.domain.dto.paint.PaintingModifyTagsRequest;
 import org.jnjeaaaat.onbition.domain.entity.ElasticSearchPainting;
 import org.jnjeaaaat.onbition.domain.entity.Painting;
 import org.jnjeaaaat.onbition.domain.entity.User;
+import org.jnjeaaaat.onbition.domain.repository.ElasticSearchPaintingRepository;
 import org.jnjeaaaat.onbition.domain.repository.PaintingRepository;
 import org.jnjeaaaat.onbition.domain.repository.UserRepository;
 import org.jnjeaaaat.onbition.exception.BaseException;
@@ -62,8 +63,7 @@ public class PaintingServiceImpl implements PaintingService {
         .orElseThrow(() -> new BaseException(NOT_FOUND_USER));
 
     // isSale이 true인데 가격이 1000원 미만일때
-    if (request.getIsSale() && (request.getAuctionPrice() < 1000L
-        || request.getSalePrice() < 1000L)) {
+    if (request.getIsSale() && request.getPrice() < 1000L) {
       throw new BaseException(UNDER_MIN_PRICE);
     }
 
@@ -79,8 +79,7 @@ public class PaintingServiceImpl implements PaintingService {
         .title(request.getTitle())
         .description(request.getDescription())
         .isSale(request.getIsSale())
-        .auctionPrice(request.getAuctionPrice())
-        .salePrice(request.getSalePrice())
+        .price(request.getPrice())
         .tags(request.getTags())
         .build();
 
@@ -125,7 +124,7 @@ public class PaintingServiceImpl implements PaintingService {
     }
 
     // 검색된 전체 그림을 조회할때
-    if (onlySalePageDto.getOnlySale() == false) {
+    if (!onlySalePageDto.getOnlySale()) {
       log.info("[searchPaintings] 판매중이 아닌 그림 조회");
       return elasticSearchPaintingRepository.findByTitleOrTags(keyword, keyword, pageable);
     }
@@ -145,7 +144,7 @@ public class PaintingServiceImpl implements PaintingService {
     }
 
     // 판매중이고 가격 범위를 지정한 그림을 조회할때
-    return elasticSearchPaintingRepository.findByTitleAndSalePriceBetween(
+    return elasticSearchPaintingRepository.findByTitleAndPriceBetween(
         keyword, minPrice, maxPrice, pageable
     );
 
@@ -198,7 +197,7 @@ public class PaintingServiceImpl implements PaintingService {
     }
 
     // 가격이 1000원 보다 낮을때
-    if (request.getAuctionPrice() < 1000L || request.getSalePrice() < 1000L) {
+    if (request.getPrice() < 1000L) {
       throw new BaseException(UNDER_MIN_PRICE);
     }
 
@@ -229,19 +228,17 @@ public class PaintingServiceImpl implements PaintingService {
   private void updatePrice(Painting painting, PaintingModifyPriceRequest request) {
     log.info("[updatePrice] db price 변경 시작");
     painting.setIsSale(true);
-    painting.setAuctionPrice(request.getAuctionPrice());
-    painting.setSalePrice(request.getSalePrice());
+    painting.setPrice(request.getPrice());
     log.info("[updatePrice] db price 변경 완료");
 
     ElasticSearchPainting esPainting = elasticSearchPaintingRepository.findById(painting.getId())
         .orElseThrow(() -> new BaseException(NOT_FOUND_PAINTING));
 
-    log.info("[updateTag] es tag 변경 시작");
+    log.info("[updateTag] es price 변경 시작");
     esPainting.setIsSale(true);
-    esPainting.setAuctionPrice(request.getAuctionPrice());
-    esPainting.setSalePrice(request.getSalePrice());
+    esPainting.setPrice(request.getPrice());
     elasticSearchPaintingRepository.save(esPainting);
-    log.info("[updateTag] es tag 변경 완료");
+    log.info("[updateTag] es price 변경 완료");
 
   }
 }

@@ -2,6 +2,7 @@ package org.jnjeaaaat.onbition.web;
 
 import static org.jnjeaaaat.onbition.domain.dto.base.BaseStatus.SUCCESS_CHANGE_MONEY;
 
+import jakarta.validation.Valid;
 import lombok.RequiredArgsConstructor;
 import lombok.extern.slf4j.Slf4j;
 import org.jnjeaaaat.onbition.config.annotation.AuthUser;
@@ -16,7 +17,7 @@ import org.springframework.web.bind.annotation.RequestMapping;
 import org.springframework.web.bind.annotation.RestController;
 
 /**
- *
+ * 입출금 api
  */
 @Slf4j
 @RestController
@@ -34,7 +35,7 @@ public class BalanceController {
   @PostMapping
   public BaseResponse<ChangeMoneyResponse> depositWithdraw(
       @AuthUser UserDetails userDetails,
-      @RequestBody ChangeMoneyRequest request
+      @Valid @RequestBody ChangeMoneyRequest request
   ) {
 
     log.info("[depositWithdraw] 계좌 입금 & 출금 요청");

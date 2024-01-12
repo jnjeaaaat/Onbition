@@ -14,7 +14,6 @@ import lombok.NoArgsConstructor;
 @Builder
 public class PaintingModifyPriceRequest {
 
-  private Long auctionPrice;   // 경매가
-  private Long salePrice;     // 매매가
+  private Long price;     // 매매가
 
 }

@@ -33,10 +33,7 @@
     "isSale": {
       "type": "boolean"
     },
-    "auctionPrice": {
-      "type": "long"
-    },
-    "salePrice": {
+    "price": {
       "type": "long"
     },
     "tags": {

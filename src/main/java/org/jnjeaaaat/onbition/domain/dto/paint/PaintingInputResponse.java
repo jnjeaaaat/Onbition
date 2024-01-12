@@ -26,8 +26,7 @@ public class PaintingInputResponse {
   private String title;   // 그림 제목
   private String description;  // 그림 설명
   private Boolean isSale;     // 그림 판매 여부
-  private Long auctionPrice;    // 경매 시작 가격
-  private Long salePrice;   // 매매 가격
+  private Long price;   // 매매 가격
   private Set<String> tags;    // tags 리스트
   private LocalDateTime createdAt;    // 그림 생성 시각
   private LocalDateTime updatedAt;
@@ -40,8 +39,7 @@ public class PaintingInputResponse {
         .title(painting.getTitle())
         .description(painting.getDescription())
         .isSale(painting.getIsSale())
-        .auctionPrice(painting.getAuctionPrice())
-        .salePrice(painting.getSalePrice())
+        .price(painting.getPrice())
         .tags(painting.getTags())
         .createdAt(painting.getCreatedAt())
         .updatedAt(painting.getUpdatedAt())

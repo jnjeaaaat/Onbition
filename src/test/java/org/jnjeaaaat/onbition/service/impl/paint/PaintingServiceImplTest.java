@@ -81,8 +81,7 @@ class PaintingServiceImplTest {
             .title("testTitle")
             .description("testDescription")
             .isSale(false)
-            .auctionPrice(0L)
-            .salePrice(0L)
+            .price(0L)
             .tags(tagSet)
             .build());
 
@@ -92,8 +91,7 @@ class PaintingServiceImplTest {
             .title("testTitle")
             .description("testDescription")
             .isSale(false)
-            .auctionPrice(0L)
-            .salePrice(0L)
+            .price(0L)
             .tags(tagSet)
             .build());
 
@@ -118,8 +116,7 @@ class PaintingServiceImplTest {
     PaintingInputRequest request =
         PaintingInputRequest.builder()
             .isSale(true)
-            .auctionPrice(999L)
-            .salePrice(1000L)
+            .price(900L)
             .build();
 
     BaseException exception = assertThrows(BaseException.class,
@@ -177,8 +174,7 @@ class PaintingServiceImplTest {
         .title("testTitle")
         .description("testDescription")
         .isSale(false)
-        .auctionPrice(0L)
-        .salePrice(0L)
+        .price(0L)
         .tags(new HashSet<>(List.of("tag1", "tag2")))
         .build();
 
@@ -276,8 +272,7 @@ class PaintingServiceImplTest {
         .title("testTitle")
         .description("testDescription")
         .isSale(false)
-        .auctionPrice(0L)
-        .salePrice(0L)
+        .price(0L)
         .tags(new HashSet<>(List.of("tag1", "tag2")))
         .build();
 
@@ -288,7 +283,7 @@ class PaintingServiceImplTest {
         .willReturn(Optional.of(ElasticSearchPainting.from(painting)));
 
     PaintingModifyPriceRequest request =
-        new PaintingModifyPriceRequest(10000L, 12000L);
+        new PaintingModifyPriceRequest(12000L);
 
     //when
     PaintingInputResponse response =
@@ -346,7 +341,7 @@ class PaintingServiceImplTest {
             .build()));
 
     PaintingModifyPriceRequest request =
-        new PaintingModifyPriceRequest(900L, 950L);
+        new PaintingModifyPriceRequest(950L);
 
     //when
     BaseException exception = assertThrows(BaseException.class,
@@ -373,7 +368,7 @@ class PaintingServiceImplTest {
         .willReturn(Optional.empty());
 
     PaintingModifyPriceRequest request =
-        new PaintingModifyPriceRequest(10000L, 11000L);
+        new PaintingModifyPriceRequest(11000L);
 
     //when
     BaseException exception = assertThrows(BaseException.class,

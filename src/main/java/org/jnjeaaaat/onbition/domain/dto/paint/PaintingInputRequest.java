@@ -30,8 +30,7 @@ public class PaintingInputRequest {
   @NotNull
   private Boolean isSale;     // 그림 판매 여부
 
-  private Long auctionPrice;    // 경매 시작 가격
-  private Long salePrice;   // 매매 가격
+  private Long price;   // 매매 가격
 
   @TagSize
   private Set<String> tags;    // tags 리스트
