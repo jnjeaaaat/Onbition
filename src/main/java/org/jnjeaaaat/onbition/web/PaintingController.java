@@ -51,18 +51,6 @@ public class PaintingController {
 
   }
 
-//  @GetMapping("/{paintingId}")
-//  public BaseResponse<PaintingDetailResponse> getPainting(
-//      @AuthUser UserDetails userDetails,
-//      @PathVariable Long paintingId) {
-//
-//    log.info("[getPainting] 그림 하나 조회 요청");
-//
-//    return BaseResponse.success(
-//        SUCCESS,
-//        paintingService.getPainting(userDetails.getUsername(), paintingId)
-//    );
-//  }
 
 
 }

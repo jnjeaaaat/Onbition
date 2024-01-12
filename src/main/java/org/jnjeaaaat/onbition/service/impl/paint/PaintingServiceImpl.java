@@ -4,18 +4,13 @@ import static org.jnjeaaaat.onbition.domain.dto.base.BaseStatus.NOT_FOUND_USER;
 import static org.jnjeaaaat.onbition.domain.dto.base.BaseStatus.UNDER_MIN_PRICE;
 
 import java.io.IOException;
-import java.util.List;
-import java.util.stream.Collectors;
-import java.util.stream.Stream;
 import lombok.RequiredArgsConstructor;
 import lombok.extern.slf4j.Slf4j;
 import org.jnjeaaaat.onbition.domain.dto.file.FileFolder;
 import org.jnjeaaaat.onbition.domain.dto.paint.PaintingInputRequest;
 import org.jnjeaaaat.onbition.domain.dto.paint.PaintingInputResponse;
-import org.jnjeaaaat.onbition.domain.entity.ElasticSearchPainting;
 import org.jnjeaaaat.onbition.domain.entity.Painting;
 import org.jnjeaaaat.onbition.domain.entity.User;
-import org.jnjeaaaat.onbition.domain.repository.ElasticSearchPaintingRepository;
 import org.jnjeaaaat.onbition.domain.repository.PaintingRepository;
 import org.jnjeaaaat.onbition.domain.repository.UserRepository;
 import org.jnjeaaaat.onbition.exception.BaseException;
@@ -36,8 +31,6 @@ public class PaintingServiceImpl implements PaintingService {
 
   private final UserRepository userRepository;
   private final PaintingRepository paintingRepository;
-  private final PaintingSearchServiceImpl paintingSearchService;
-  private final ElasticSearchPaintingRepository elasticSearchPaintingRepository;
 
 
   private final String DREAMER = "ROLE_DREAMER";
@@ -81,19 +74,7 @@ public class PaintingServiceImpl implements PaintingService {
 
     Painting savedPainting = paintingRepository.save(painting);
 
-    // ES에 저장
-    log.info("[createPainting] ES 저장 시작");
-
-    elasticSearchPaintingRepository.save(ElasticSearchPainting.from(savedPainting));
-    log.info("[createPainting] ES 저장 끝");
-
     return PaintingInputResponse.from(savedPainting);
   }
 
-//  @Override
-//  public PaintingDetailResponse getPainting(String uid, Long paintingId) {
-//
-//    return PaintingDetailResponse.from(esPaintingRepository.findById(paintingId)
-//        .orElseThrow(() -> new BaseException(NOT_FOUND_PAINTING)));
-//  }
 }
