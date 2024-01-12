@@ -21,6 +21,7 @@ import lombok.NoArgsConstructor;
 import lombok.Setter;
 import org.hibernate.annotations.JdbcTypeCode;
 import org.hibernate.type.SqlTypes;
+import org.jnjeaaaat.onbition.domain.entity.pay.UserBalance;
 
 /**
  * SpringSecurity UserDetails 구현하는 User Entity
@@ -71,10 +72,21 @@ public class User extends BaseEntity {
   @Builder.Default
   private List<Painting> paintings = new ArrayList<>();
 
+  @OneToMany(mappedBy = "user", cascade = CascadeType.ALL, orphanRemoval = true)
+  @Builder.Default
+  private List<UserBalance> balances = new ArrayList<>();
+
   /*
   유저 새로운 권한 추가 method
    */
   public boolean addRoles(String newRole) {
     return this.roles.add(newRole);
+  }
+
+  /*
+  유저 권한 제거 method
+   */
+  public boolean removeRole(String role) {
+    return this.roles.remove(role);
   }
 }

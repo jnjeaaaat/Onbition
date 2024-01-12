@@ -20,7 +20,6 @@ import org.jnjeaaaat.onbition.domain.dto.paint.PaintingModifyTagsRequest;
 import org.jnjeaaaat.onbition.domain.entity.ElasticSearchPainting;
 import org.jnjeaaaat.onbition.domain.entity.Painting;
 import org.jnjeaaaat.onbition.domain.entity.User;
-import org.jnjeaaaat.onbition.domain.repository.ElasticSearchPaintingRepository;
 import org.jnjeaaaat.onbition.domain.repository.PaintingRepository;
 import org.jnjeaaaat.onbition.domain.repository.UserRepository;
 import org.jnjeaaaat.onbition.exception.BaseException;
@@ -245,5 +244,4 @@ public class PaintingServiceImpl implements PaintingService {
     log.info("[updateTag] es tag 변경 완료");
 
   }
-
 }

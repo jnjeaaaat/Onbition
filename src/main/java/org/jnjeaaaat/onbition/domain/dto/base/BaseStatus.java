@@ -43,6 +43,9 @@ public enum BaseStatus {
   SUCCESS_MODIFY_PAINTING_TAGS(true, OK.value(), "태그를 수정하였습니다."),
   SUCCESS_CONVERT_TO_SALE(true, OK.value(), "그림 판매를 시작합니다."),
 
+  // money
+  SUCCESS_CHANGE_MONEY(true, OK.value(), "잔액이 변경되었습니다."),
+
 
 
   //////////////////////////////// failed response ////////////////////////////////
@@ -73,6 +76,9 @@ public enum BaseStatus {
 
   // painting elasticsearch
   WRONG_PRICE_RANGE(false, BAD_REQUEST.value(), "최소금액이 최대금액보다 클 수 없습니다."),
+
+  // money
+  AMOUNT_LESS_THAN_CURRENT(false, BAD_REQUEST.value(), "잔액이 부족합니다."),
 
 
   // file
