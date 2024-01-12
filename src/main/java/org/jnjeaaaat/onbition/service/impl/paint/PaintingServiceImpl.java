@@ -126,7 +126,7 @@ public class PaintingServiceImpl implements PaintingService {
     }
 
     // 검색된 전체 그림을 조회할때
-    if (!onlySalePageDto.getOnlySale()) {
+    if (onlySalePageDto.getOnlySale() == false) {
       log.info("[searchPaintings] 판매중이 아닌 그림 조회");
       return elasticSearchPaintingRepository.findByTitleOrTags(keyword, keyword, pageable);
     }
