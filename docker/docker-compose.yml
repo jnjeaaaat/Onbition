@@ -1,0 +1,54 @@
+version: '3.7'
+
+services:
+  es-node-01:
+    build:
+      context: .
+      dockerfile: ./Dockerfile
+      args:
+        ELK_VERSION: 8.6.2
+    container_name: es-node-01
+    environment:
+      - cluster.name=es-docker-cluster
+      - node.name=es01
+      - xpack.security.enabled=false
+      - discovery.type=single-node
+    ulimits:
+      memlock:
+        soft: -1
+        hard: -1
+      nofile:
+        soft: 262144
+        hard: 262144
+    cap_add:
+      - IPC_LOCK
+    volumes:
+      - data01:/usr/share/elasticsearch/data
+    ports:
+      - "9200:9200"
+      - "9300:9300"
+    restart: always
+    networks:
+      - onbition
+
+  kibana:
+    container_name: kibana
+    image: docker.elastic.co/kibana/kibana:8.6.2
+    environment:
+      ELASTICSEARCH_URL: http://es-node-01:9200
+      ELASTICSEARCH_HOSTS: http://es-node-01:9200
+    ports:
+      - "5601:5601"
+    depends_on:
+      - es-node-01
+    restart: always
+    networks:
+      - onbition
+
+volumes:
+  data01:
+    driver: local
+
+networks:
+  onbition:
+    driver: bridge

@@ -1,8 +1,14 @@
 package org.jnjeaaaat.onbition.service;
 
 import java.io.IOException;
+import org.jnjeaaaat.onbition.domain.dto.page.OnlySalePageDto;
 import org.jnjeaaaat.onbition.domain.dto.paint.PaintingInputRequest;
 import org.jnjeaaaat.onbition.domain.dto.paint.PaintingInputResponse;
+import org.jnjeaaaat.onbition.domain.dto.paint.PaintingModifyPriceRequest;
+import org.jnjeaaaat.onbition.domain.dto.paint.PaintingModifyTagsRequest;
+import org.jnjeaaaat.onbition.domain.entity.ElasticSearchPainting;
+import org.springframework.data.domain.Pageable;
+import org.springframework.data.domain.Slice;
 import org.springframework.web.multipart.MultipartFile;
 
 /**
@@ -15,6 +21,16 @@ public interface PaintingService {
       throws IOException;
 
   // 그림 하나 조회
-//  PaintingDetailResponse getPainting(String uid, Long paintingId);
+  ElasticSearchPainting getPainting(String uid, Long paintingId);
+
+  // 제목으로 검색
+  Slice<ElasticSearchPainting> searchPaintings(String keyword, Pageable pageable, OnlySalePageDto onlySalePageDto);
+
+  // 그림 태그 변경
+  PaintingInputResponse updatePaintingTags(String uid, Long paintingId, PaintingModifyTagsRequest request);
+
+  // 판매중인 그림으로 변환
+  PaintingInputResponse convertPaintingToSale(String uid, Long paintingId, PaintingModifyPriceRequest request);
+
 
 }

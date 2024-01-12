@@ -12,3 +12,8 @@
 
 ## ✨ ImmutableCollections 에러 해결
 ### [해결과정](https://jnjeaaaat.tistory.com/81)
+
+<br/>
+
+## ✨ test code csrf 문제 해결
+### [해결과정](https://jnjeaaaat.tistory.com/82)
