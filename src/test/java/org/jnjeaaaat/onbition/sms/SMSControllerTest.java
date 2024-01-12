@@ -2,12 +2,14 @@ package org.jnjeaaaat.onbition.sms;
 
 import static org.mockito.ArgumentMatchers.anyString;
 import static org.mockito.BDDMockito.given;
+import static org.springframework.security.test.web.servlet.request.SecurityMockMvcRequestPostProcessors.csrf;
 import static org.springframework.test.web.servlet.request.MockMvcRequestBuilders.post;
 import static org.springframework.test.web.servlet.result.MockMvcResultHandlers.print;
 import static org.springframework.test.web.servlet.result.MockMvcResultMatchers.jsonPath;
 import static org.springframework.test.web.servlet.result.MockMvcResultMatchers.status;
 
 import com.fasterxml.jackson.databind.ObjectMapper;
+import org.jnjeaaaat.onbition.config.WithCustomMockUser;
 import org.jnjeaaaat.onbition.domain.dto.auth.SendTextResponse;
 import org.jnjeaaaat.onbition.service.impl.auth.SMSServiceImpl;
 import org.jnjeaaaat.onbition.config.security.JwtTokenProvider;
@@ -37,6 +39,7 @@ class SMSControllerTest {
   ObjectMapper objectMapper;
 
   @Test
+  @WithCustomMockUser
   @DisplayName("[controller] 인증코드 전송")
   void send_message() throws Exception {
     //given
@@ -45,14 +48,17 @@ class SMSControllerTest {
 
     //when
     //then
-    mockMvc.perform(post("/api/v1/sms?phone=010-1234-1234"))
+    mockMvc.perform(post("/api/v1/sms?phone=010-1234-1234")
+            .with(csrf()))
+
         .andDo(print())
-//        .andExpect(jsonPath("$.result.verificationCode").value("000000"))
+        .andExpect(jsonPath("$.result.verificationCode").value("000000"))
         .andExpect(status().isOk());
 
   }
 
   @Test
+  @WithCustomMockUser
   @DisplayName("[controller] 인증코드 인증")
   void authenticate_verificationCode() throws Exception {
     //given
@@ -61,12 +67,13 @@ class SMSControllerTest {
 
     //when
     //then
-    mockMvc.perform(post("/api/v1/sms/authentication?phone=010-1234-1234&code=000000"))
+    mockMvc.perform(post("/api/v1/sms/authentication?phone=010-1234-1234&code=000000")
+            .with(csrf()))
+
         .andExpect(jsonPath("$.result").value("010-1234-1234"))
         .andExpect(status().isOk())
         .andDo(print());
   }
-
 
 
 }

@@ -1,0 +1,54 @@
+{
+  "properties": {
+    "id": {
+      "type": "keyword"
+    },
+    "user": {
+      "properties": {
+        "userId": {
+          "type": "long"
+        },
+        "name": {
+          "type": "text"
+        },
+        "profileImgUrl": {
+          "type": "text"
+        },
+        "uid": {
+          "type": "text"
+        }
+      }
+    },
+    "paintingImgUrl": {
+      "type": "text"
+    },
+    "title": {
+      "type": "text",
+      "analyzer": "nori"
+    },
+    "description": {
+      "type": "text",
+      "analyzer": "nori"
+    },
+    "isSale": {
+      "type": "boolean"
+    },
+    "auctionPrice": {
+      "type": "long"
+    },
+    "salePrice": {
+      "type": "long"
+    },
+    "tags": {
+      "type": "text",
+      "analyzer": "nori"
+    },
+    "createdAt": {
+      "type": "date"
+    },
+    "updatedAt": {
+      "type": "date"
+    }
+
+  }
+}

@@ -1,9 +1,12 @@
 package org.jnjeaaaat.onbition.service.impl.paint;
 
+import static org.jnjeaaaat.onbition.domain.dto.base.BaseStatus.NOT_FOUND_PAINTING;
 import static org.jnjeaaaat.onbition.domain.dto.base.BaseStatus.UNDER_MIN_PRICE;
+import static org.jnjeaaaat.onbition.domain.dto.base.BaseStatus.UN_MATCH_USER;
 import static org.junit.jupiter.api.Assertions.assertEquals;
 import static org.junit.jupiter.api.Assertions.assertThrows;
 import static org.mockito.ArgumentMatchers.any;
+import static org.mockito.ArgumentMatchers.anyLong;
 import static org.mockito.ArgumentMatchers.anyString;
 import static org.mockito.BDDMockito.given;
 
@@ -15,8 +18,12 @@ import java.util.Set;
 import org.jnjeaaaat.onbition.common.MockImage;
 import org.jnjeaaaat.onbition.domain.dto.paint.PaintingInputRequest;
 import org.jnjeaaaat.onbition.domain.dto.paint.PaintingInputResponse;
+import org.jnjeaaaat.onbition.domain.dto.paint.PaintingModifyPriceRequest;
+import org.jnjeaaaat.onbition.domain.dto.paint.PaintingModifyTagsRequest;
+import org.jnjeaaaat.onbition.domain.entity.ElasticSearchPainting;
 import org.jnjeaaaat.onbition.domain.entity.Painting;
 import org.jnjeaaaat.onbition.domain.entity.User;
+import org.jnjeaaaat.onbition.domain.repository.ElasticSearchPaintingRepository;
 import org.jnjeaaaat.onbition.domain.repository.PaintingRepository;
 import org.jnjeaaaat.onbition.domain.repository.UserRepository;
 import org.jnjeaaaat.onbition.exception.BaseException;
@@ -39,6 +46,9 @@ class PaintingServiceImplTest {
 
   @Mock
   private PaintingRepository paintingRepository;
+
+  @Mock
+  private ElasticSearchPaintingRepository elasticSearchPaintingRepository;
 
   @InjectMocks
   private PaintingServiceImpl paintingService;
@@ -67,6 +77,17 @@ class PaintingServiceImplTest {
     given(paintingRepository.save(any()))
         .willReturn(Painting.builder()
             .user(user)
+            .paintingImgUrl("testPaintingImgUrl")
+            .title("testTitle")
+            .description("testDescription")
+            .isSale(false)
+            .auctionPrice(0L)
+            .salePrice(0L)
+            .tags(tagSet)
+            .build());
+
+    given(elasticSearchPaintingRepository.save(any()))
+        .willReturn(ElasticSearchPainting.builder()
             .paintingImgUrl("testPaintingImgUrl")
             .title("testTitle")
             .description("testDescription")
@@ -106,5 +127,259 @@ class PaintingServiceImplTest {
 
     //then
     assertEquals(UNDER_MIN_PRICE, exception.getStatus());
+  }
+
+  @Test
+  @DisplayName("[service] 그림 하나 조회")
+  void success_search_painting() {
+    //given
+    given(elasticSearchPaintingRepository.findById(anyLong()))
+        .willReturn(Optional.of(
+            ElasticSearchPainting.builder()
+                .id(1L)
+                .title("testTitle")
+                .description("testDescription")
+                .build()));
+
+    //when
+    ElasticSearchPainting elasticSearchPainting =
+        paintingService.getPainting("testUid", 1L);
+
+    //then
+    assertEquals("testTitle", elasticSearchPainting.getTitle());
+  }
+
+  @Test
+  @DisplayName("[service] 그림 하나 조회 실패 - 해당 그림 없음")
+  void failed_search_painting_NOT_FOUND_PAINTING() {
+    //given
+    given(elasticSearchPaintingRepository.findById(anyLong()))
+        .willReturn(Optional.empty());
+
+    //when
+    BaseException exception = assertThrows(BaseException.class,
+        () -> paintingService.getPainting("testId", 1L));
+
+    //then
+    assertEquals(NOT_FOUND_PAINTING, exception.getStatus());
+  }
+
+  @Test
+  @DisplayName("[service] 그림 태그 변경 성공")
+  void success_update_painting_tags() {
+    //given
+    Painting painting = Painting.builder()
+        .id(1L)
+        .user(User.builder()
+            .uid("testUid")
+            .build())
+        .paintingImgUrl("testPaintingImgUrl")
+        .title("testTitle")
+        .description("testDescription")
+        .isSale(false)
+        .auctionPrice(0L)
+        .salePrice(0L)
+        .tags(new HashSet<>(List.of("tag1", "tag2")))
+        .build();
+
+    given(paintingRepository.findById(anyLong()))
+        .willReturn(Optional.of(painting));
+
+    given(elasticSearchPaintingRepository.findById(anyLong()))
+        .willReturn(Optional.of(ElasticSearchPainting.from(painting)));
+
+    Set<String> newTags = new HashSet<>(List.of("tag3", "tag4"));
+    PaintingModifyTagsRequest request =
+        new PaintingModifyTagsRequest(newTags);
+
+    //when
+    PaintingInputResponse response =
+        paintingService.updatePaintingTags("testUid", 1L, request);
+
+    //then
+    assertEquals(newTags, response.getTags());
+  }
+
+  @Test
+  @DisplayName("[service] 태그 변경 실패 - 해당 그림 없음")
+  void failed_update_painting_tags_NOT_FOUND_PAINTING() {
+    //given
+    given(paintingRepository.findById(anyLong()))
+        .willReturn(Optional.empty());
+
+    //when
+    BaseException exception = assertThrows(BaseException.class,
+        () -> paintingService.updatePaintingTags("testUid", 1L, null));
+
+    //then
+    assertEquals(NOT_FOUND_PAINTING, exception.getStatus());
+  }
+
+  @Test
+  @DisplayName("[service] 태그 변경 실패 - 유저 다름")
+  void failed_update_painting_tags_UN_MATCH_USER() {
+    //given
+    given(paintingRepository.findById(anyLong()))
+        .willReturn(Optional.of(Painting.builder()
+            .id(1L)
+            .user(User.builder()
+                .uid("testUid")
+                .build())
+            .build()));
+
+    //when
+    BaseException exception = assertThrows(BaseException.class,
+        () -> paintingService.updatePaintingTags("otherUid", 1L, null));
+
+    //then
+    assertEquals(UN_MATCH_USER, exception.getStatus());
+  }
+
+  @Test
+  @DisplayName("[service] 태그 변경 실패 - 해당 ES 그림 없음")
+  void failed_update_painting_tags_NOT_FOUND_ELASTICPAINTING() {
+    //given
+    given(paintingRepository.findById(anyLong()))
+        .willReturn(Optional.of(Painting.builder()
+            .id(1L)
+            .user(User.builder()
+                .uid("testUid")
+                .build())
+            .tags(new HashSet<>(List.of("tag1", "tag2")))
+            .build()));
+
+    given(elasticSearchPaintingRepository.findById(anyLong()))
+        .willReturn(Optional.empty());
+
+    Set<String> newTags = new HashSet<>(List.of("tag3", "tag4"));
+    PaintingModifyTagsRequest request =
+        new PaintingModifyTagsRequest(newTags);
+
+    //when
+    BaseException exception = assertThrows(BaseException.class,
+        () -> paintingService.updatePaintingTags("testUid", 1L, request));
+
+    //then
+    assertEquals(NOT_FOUND_PAINTING, exception.getStatus());
+  }
+
+  @Test
+  @DisplayName("[service] 판매중으로 변경 성공")
+  void success_convert_sale() {
+    //given
+    Painting painting = Painting.builder()
+        .id(1L)
+        .user(User.builder()
+            .uid("testUid")
+            .build())
+        .paintingImgUrl("testPaintingImgUrl")
+        .title("testTitle")
+        .description("testDescription")
+        .isSale(false)
+        .auctionPrice(0L)
+        .salePrice(0L)
+        .tags(new HashSet<>(List.of("tag1", "tag2")))
+        .build();
+
+    given(paintingRepository.findById(anyLong()))
+        .willReturn(Optional.of(painting));
+
+    given(elasticSearchPaintingRepository.findById(anyLong()))
+        .willReturn(Optional.of(ElasticSearchPainting.from(painting)));
+
+    PaintingModifyPriceRequest request =
+        new PaintingModifyPriceRequest(10000L, 12000L);
+
+    //when
+    PaintingInputResponse response =
+        paintingService.convertPaintingToSale("testUid", 1L, request);
+
+    //then
+    assertEquals(true, response.getIsSale());
+  }
+
+  @Test
+  @DisplayName("[service] 판매중으로 변경 실패 - 해당 그림 없음")
+  void failed_convert_sale_NOT_FOUND_PAINTING() {
+    //given
+    given(paintingRepository.findById(anyLong()))
+        .willReturn(Optional.empty());
+
+    //when
+    BaseException exception = assertThrows(BaseException.class,
+        () -> paintingService.convertPaintingToSale("testUid", 1L, null));
+
+    //then
+    assertEquals(NOT_FOUND_PAINTING, exception.getStatus());
+  }
+
+  @Test
+  @DisplayName("[service] 판매중으로 변경 실패 - 유저 다름")
+  void failed_convert_sale_UN_MATCH_USR() {
+    //given
+    given(paintingRepository.findById(anyLong()))
+        .willReturn(Optional.of(Painting.builder()
+            .id(1L)
+            .user(User.builder()
+                .uid("testUid")
+                .build())
+            .build()));
+
+    //when
+    BaseException exception = assertThrows(BaseException.class,
+        () -> paintingService.convertPaintingToSale("otherUid", 1L, null));
+
+    //then
+    assertEquals(UN_MATCH_USER, exception.getStatus());
+  }
+
+  @Test
+  @DisplayName("[service] 판매중으로 변경 실패 - 가격 1000원 미만")
+  void failed_convert_sale_UNDER_MIN_PRICE() {
+    //given
+    given(paintingRepository.findById(anyLong()))
+        .willReturn(Optional.of(Painting.builder()
+            .id(1L)
+            .user(User.builder()
+                .uid("testUid")
+                .build())
+            .build()));
+
+    PaintingModifyPriceRequest request =
+        new PaintingModifyPriceRequest(900L, 950L);
+
+    //when
+    BaseException exception = assertThrows(BaseException.class,
+        () -> paintingService.convertPaintingToSale("testUid", 1L, request));
+
+    //then
+    assertEquals(UNDER_MIN_PRICE, exception.getStatus());
+  }
+
+  @Test
+  @DisplayName("[service] 판매중으로 변경 실패 - 해당 ES 그림 없음")
+  void failed_convert_sale_NOT_FOUND_ELASTICPAINTING() {
+    //given
+    given(paintingRepository.findById(anyLong()))
+        .willReturn(Optional.of(Painting.builder()
+            .id(1L)
+            .user(User.builder()
+                .uid("testUid")
+                .build())
+            .isSale(false)
+            .build()));
+
+    given(elasticSearchPaintingRepository.findById(anyLong()))
+        .willReturn(Optional.empty());
+
+    PaintingModifyPriceRequest request =
+        new PaintingModifyPriceRequest(10000L, 11000L);
+
+    //when
+    BaseException exception = assertThrows(BaseException.class,
+        () -> paintingService.convertPaintingToSale("testUid", 1L, request));
+
+    //then
+    assertEquals(NOT_FOUND_PAINTING, exception.getStatus());
   }
 }

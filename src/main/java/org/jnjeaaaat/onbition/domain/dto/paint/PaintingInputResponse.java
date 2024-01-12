@@ -30,6 +30,7 @@ public class PaintingInputResponse {
   private Long salePrice;   // 매매 가격
   private Set<String> tags;    // tags 리스트
   private LocalDateTime createdAt;    // 그림 생성 시각
+  private LocalDateTime updatedAt;
 
   public static PaintingInputResponse from(Painting painting) {
     return PaintingInputResponse.builder()
@@ -38,11 +39,12 @@ public class PaintingInputResponse {
         .paintingImgUrl(painting.getPaintingImgUrl())
         .title(painting.getTitle())
         .description(painting.getDescription())
-        .isSale(painting.isSale())
+        .isSale(painting.getIsSale())
         .auctionPrice(painting.getAuctionPrice())
         .salePrice(painting.getSalePrice())
         .tags(painting.getTags())
         .createdAt(painting.getCreatedAt())
+        .updatedAt(painting.getUpdatedAt())
         .build();
   }
 

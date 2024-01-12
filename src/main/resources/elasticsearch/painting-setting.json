@@ -1,0 +1,28 @@
+{
+  "analysis": {
+    "analyzer": {
+      "nori": {
+        "type": "custom",
+        "tokenizer": "nori_mixed",
+        "filter": [
+          "lowercase",
+          "my_pos_f"
+        ]
+      }
+    },
+    "filter": {
+      "my_pos_f": {
+        "type": "nori_part_of_speech",
+        "stoptags": [
+          "VCP"
+        ]
+      }
+    },
+    "tokenizer": {
+      "nori_mixed": {
+        "type": "nori_tokenizer",
+        "decompound_mode": "mixed"
+      }
+    }
+  }
+}
