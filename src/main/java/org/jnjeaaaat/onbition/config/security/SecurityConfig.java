@@ -46,6 +46,10 @@ public class SecurityConfig {
                 "/api/v1/sms/**"
             ).permitAll()
 
+            .requestMatchers(
+                "/api/v1/payments/{paintingId}"
+            ).hasAnyRole("BUYER")
+
             .anyRequest().authenticated()
         )
 

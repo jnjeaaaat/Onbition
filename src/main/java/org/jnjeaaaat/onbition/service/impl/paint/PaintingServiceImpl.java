@@ -20,9 +20,11 @@ import org.jnjeaaaat.onbition.domain.dto.paint.PaintingModifyTagsRequest;
 import org.jnjeaaaat.onbition.domain.entity.ElasticSearchPainting;
 import org.jnjeaaaat.onbition.domain.entity.Painting;
 import org.jnjeaaaat.onbition.domain.entity.User;
+import org.jnjeaaaat.onbition.domain.entity.pay.OwnerHistory;
 import org.jnjeaaaat.onbition.domain.repository.ElasticSearchPaintingRepository;
 import org.jnjeaaaat.onbition.domain.repository.PaintingRepository;
 import org.jnjeaaaat.onbition.domain.repository.UserRepository;
+import org.jnjeaaaat.onbition.domain.repository.pay.OwnerHistoryRepository;
 import org.jnjeaaaat.onbition.exception.BaseException;
 import org.jnjeaaaat.onbition.service.ImageService;
 import org.jnjeaaaat.onbition.service.PaintingService;
@@ -43,6 +45,7 @@ public class PaintingServiceImpl implements PaintingService {
   private final ImageService imageService;
 
   private final UserRepository userRepository;
+  private final OwnerHistoryRepository ownerHistoryRepository;
   private final PaintingRepository paintingRepository;
   private final ElasticSearchPaintingRepository elasticSearchPaintingRepository;
 
@@ -89,6 +92,14 @@ public class PaintingServiceImpl implements PaintingService {
     log.info("[createPainting] ES 저장 시작");
     elasticSearchPaintingRepository.save(ElasticSearchPainting.from(savedPainting));
     log.info("[createPainting] ES 저장 끝");
+
+    // owner history 추가
+    ownerHistoryRepository.save(
+        OwnerHistory.builder()
+            .user(user)
+            .painting(painting)
+            .build()
+    );
 
     return PaintingInputResponse.from(savedPainting);
   }

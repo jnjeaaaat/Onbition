@@ -9,7 +9,7 @@ import org.jnjeaaaat.onbition.config.annotation.AuthUser;
 import org.jnjeaaaat.onbition.domain.dto.base.BaseResponse;
 import org.jnjeaaaat.onbition.domain.dto.pay.ChangeMoneyRequest;
 import org.jnjeaaaat.onbition.domain.dto.pay.ChangeMoneyResponse;
-import org.jnjeaaaat.onbition.service.AccountService;
+import org.jnjeaaaat.onbition.service.BalanceService;
 import org.springframework.security.core.userdetails.UserDetails;
 import org.springframework.web.bind.annotation.PostMapping;
 import org.springframework.web.bind.annotation.RequestBody;
@@ -25,7 +25,7 @@ import org.springframework.web.bind.annotation.RestController;
 @RequestMapping("/api/v1/balances")
 public class BalanceController {
 
-  private final AccountService accountService;
+  private final BalanceService balanceService;
 
   /*
   [입출금]
@@ -42,7 +42,7 @@ public class BalanceController {
 
     return BaseResponse.success(
         SUCCESS_CHANGE_MONEY,
-        accountService.depositWithdraw(userDetails.getUsername(), request)
+        balanceService.depositWithdraw(userDetails.getUsername(), request)
     );
 
   }

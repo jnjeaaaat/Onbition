@@ -13,7 +13,7 @@ import org.jnjeaaaat.onbition.domain.entity.pay.UserBalance;
 import org.jnjeaaaat.onbition.domain.repository.UserRepository;
 import org.jnjeaaaat.onbition.domain.repository.pay.UserBalanceRepository;
 import org.jnjeaaaat.onbition.exception.BaseException;
-import org.jnjeaaaat.onbition.service.AccountService;
+import org.jnjeaaaat.onbition.service.BalanceService;
 import org.springframework.stereotype.Service;
 import org.springframework.transaction.annotation.Transactional;
 
@@ -23,7 +23,7 @@ import org.springframework.transaction.annotation.Transactional;
 @Slf4j
 @Service
 @RequiredArgsConstructor
-public class AccountServiceImpl implements AccountService {
+public class BalanceServiceImpl implements BalanceService {
 
   private final UserBalanceRepository userBalanceRepository;
   private final UserRepository userRepository;

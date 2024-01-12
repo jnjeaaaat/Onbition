@@ -42,6 +42,7 @@ public enum BaseStatus {
   SUCCESS_SEARCH_PAINTINGS_BY_TITLE(true, OK.value(), "제목으로 그림을 검색하였습니다."),
   SUCCESS_MODIFY_PAINTING_TAGS(true, OK.value(), "태그를 수정하였습니다."),
   SUCCESS_CONVERT_TO_SALE(true, OK.value(), "그림 판매를 시작합니다."),
+  SUCCESS_BUY_PAINTING(true, OK.value(), "그림을 구매하였습니다."),
 
   // money
   SUCCESS_CHANGE_MONEY(true, OK.value(), "잔액이 변경되었습니다."),
@@ -73,13 +74,14 @@ public enum BaseStatus {
   UNDER_MIN_PRICE(false, BAD_REQUEST.value(), "판매되는 그림의 가격은 1000원 이상이어야 합니다."),
   NOT_FOUND_PAINTING(false, BAD_REQUEST.value(), "해당 그림이 없습니다."),
   UN_MATCH_USER(false, BAD_REQUEST.value(), "그림의 소유자만 변경할 수 있습니다."),
+  ALREADY_OWNED_PAINTING(false, BAD_REQUEST.value(), "이미 그림의 소유주입니다."),
+  NOT_SALE_PAINTING(false, BAD_REQUEST.value(), "판매중인 그림이 아닙니다."),
 
   // painting elasticsearch
   WRONG_PRICE_RANGE(false, BAD_REQUEST.value(), "최소금액이 최대금액보다 클 수 없습니다."),
 
   // money
   AMOUNT_LESS_THAN_CURRENT(false, BAD_REQUEST.value(), "잔액이 부족합니다."),
-
 
   // file
   NOT_FOUND_FILE(false, INTERNAL_SERVER_ERROR.value(), "파일을 찾을 수 없습니다."),
