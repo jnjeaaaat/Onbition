@@ -3,6 +3,7 @@ package org.jnjeaaaat.onbition.domain.entity.pay;
 import jakarta.persistence.Column;
 import jakarta.persistence.Entity;
 import jakarta.persistence.EntityListeners;
+import jakarta.persistence.EnumType;
 import jakarta.persistence.Enumerated;
 import jakarta.persistence.FetchType;
 import jakarta.persistence.GeneratedValue;
@@ -41,7 +42,7 @@ public class UserBalance {
   @JoinColumn(name = "user_id")
   private User user; // 해당 유저
 
-  @Enumerated
+  @Enumerated(EnumType.STRING)  // 0, 1, 2, ... 가 아닌 String 그대로 저장
   @Column(nullable = false)
   private BalanceType balanceType;  // 입출금 타입
 
