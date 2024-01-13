@@ -70,9 +70,6 @@ public class PaymentServiceImpl implements PaymentService {
     Painting painting = paintingRepository.findById(paintingId)
         .orElseThrow(() -> new BaseException(NOT_FOUND_PAINTING));
 
-    // ES
-    ElasticSearchPainting esPainting = elasticSearchPaintingRepository.findById(paintingId)
-        .orElseThrow(() -> new BaseException(NOT_FOUND_PAINTING));
 
     // 구매하려는 유저의 현재 잔액
     Long currentBalance = userBalanceRepository.findAllByUserOrderByIdDesc(user)
@@ -117,21 +114,7 @@ public class PaymentServiceImpl implements PaymentService {
     }
 
     // 소유권 변경 & isSale false & 가격변경
-    painting.setUser(user);
-    painting.setIsSale(false);
-    painting.setPrice(0L);
-
-    esPainting.setUser(SimpleUserDto.from(user));  // es user 변경
-    esPainting.setIsSale(false);
-    esPainting.setPrice(0L);
-    elasticSearchPaintingRepository.save(esPainting); // es 저장
-
-    ownerHistoryRepository.save(
-        OwnerHistory.builder()
-            .user(user)
-            .painting(painting)
-            .build()
-    );
+    changeOwner(user, painting);
 
     return BuyPaintingResponse.builder()
         .painting(SimplePaintingDto.from(painting))
@@ -153,6 +136,29 @@ public class PaymentServiceImpl implements PaymentService {
     if (painting.getPrice() > currentBalance) {
       throw new BaseException(AMOUNT_LESS_THAN_CURRENT);
     }
+  }
+
+  // 소유권 변경
+  private void changeOwner(User user, Painting painting) {
+    // ES
+    ElasticSearchPainting esPainting = elasticSearchPaintingRepository.findById(painting.getId())
+        .orElseThrow(() -> new BaseException(NOT_FOUND_PAINTING));
+
+    painting.setUser(user);  // user 변경
+    painting.setIsSale(false);  // 판매여부 false
+    painting.setPrice(0L);   // 가격 0원으로 변경
+
+    esPainting.setUser(SimpleUserDto.from(user));  // es user 변경
+    esPainting.setIsSale(false);  // es 판매여부 false
+    esPainting.setPrice(0L);   // 가격 0원으로 변경
+    elasticSearchPaintingRepository.save(esPainting); // es 저장
+
+    ownerHistoryRepository.save(
+        OwnerHistory.builder()
+            .user(user)
+            .painting(painting)
+            .build()
+    );
   }
 
 }
