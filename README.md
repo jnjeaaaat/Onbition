@@ -78,3 +78,24 @@
 
 # Trouble Shooting
 [Trouble Shooting Information](doc/TROUBLE_SHOOTING.md)
+
+# Stack
+### Backend
+- Java 17
+- SpringBoot 3.x
+- Gradle
+- Junit5
+- Mockito
+
+### DB
+- MySql
+- JPA
+- Redis
+
+### Infra
+- AWS S3
+- AWS RDS
+- AWS ElastiCache
+- ElasticSearch
+- Docker
+- Docker compose
