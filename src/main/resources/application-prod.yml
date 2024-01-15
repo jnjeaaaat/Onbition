@@ -1,9 +1,10 @@
 spring:
+
   datasource:
     driver-class-name: com.mysql.cj.jdbc.Driver
-    url: jdbc:mysql://localhost:3305/${MYSQL_DATABASE}?serverTimezone=Asia/Seoul&characterEncoding=UTF-8
-    username: root
-    password: ${MYSQL_PASSWORD}
+    url: jdbc:mysql://${MYSQL_RDS_ENDPOINT}:3306/${MYSQL_RDS_DATABASE}?serverTimezone=Asia/Seoul&characterEncoding=UTF-8
+    username: admin
+    password: ${MYSQL_RDS_PASSWORD}
 
   jpa:
     hibernate:
@@ -14,7 +15,7 @@ spring:
     show-sql: true
 
   redis:
-    host: ${REDIS_HOST}
+    host: ${REDIS_PROD_HOST}
     port: ${REDIS_PORT}
     password: ${REDIS_PASSWORD}
 
@@ -51,3 +52,7 @@ logging:
       amazonaws:
         util:
           EC2MetadataUtils: error
+
+
+server:
+  port: 8081

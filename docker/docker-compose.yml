@@ -3,8 +3,8 @@ version: '3.7'
 services:
   es-node-01:
     build:
-      context: .
-      dockerfile: ./Dockerfile
+      context: ./elasticsearch
+      dockerfile: Dockerfile
       args:
         ELK_VERSION: 8.6.2
     container_name: es-node-01
