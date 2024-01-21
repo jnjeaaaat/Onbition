@@ -23,9 +23,11 @@ import org.jnjeaaaat.onbition.domain.dto.paint.PaintingModifyTagsRequest;
 import org.jnjeaaaat.onbition.domain.entity.ElasticSearchPainting;
 import org.jnjeaaaat.onbition.domain.entity.Painting;
 import org.jnjeaaaat.onbition.domain.entity.User;
+import org.jnjeaaaat.onbition.domain.entity.pay.OwnerHistory;
 import org.jnjeaaaat.onbition.domain.repository.ElasticSearchPaintingRepository;
 import org.jnjeaaaat.onbition.domain.repository.PaintingRepository;
 import org.jnjeaaaat.onbition.domain.repository.UserRepository;
+import org.jnjeaaaat.onbition.domain.repository.pay.OwnerHistoryRepository;
 import org.jnjeaaaat.onbition.exception.BaseException;
 import org.jnjeaaaat.onbition.service.impl.ImageServiceImpl;
 import org.junit.jupiter.api.DisplayName;
@@ -46,6 +48,9 @@ class PaintingServiceImplTest {
 
   @Mock
   private PaintingRepository paintingRepository;
+
+  @Mock
+  private OwnerHistoryRepository ownerHistoryRepository;
 
   @Mock
   private ElasticSearchPaintingRepository elasticSearchPaintingRepository;
@@ -74,16 +79,18 @@ class PaintingServiceImplTest {
         .tags(tagSet)
         .build();
 
+    Painting painting = Painting.builder()
+        .user(user)
+        .paintingImgUrl("testPaintingImgUrl")
+        .title("testTitle")
+        .description("testDescription")
+        .isSale(false)
+        .price(0L)
+        .tags(tagSet)
+        .build();
+
     given(paintingRepository.save(any()))
-        .willReturn(Painting.builder()
-            .user(user)
-            .paintingImgUrl("testPaintingImgUrl")
-            .title("testTitle")
-            .description("testDescription")
-            .isSale(false)
-            .price(0L)
-            .tags(tagSet)
-            .build());
+        .willReturn(painting);
 
     given(elasticSearchPaintingRepository.save(any()))
         .willReturn(ElasticSearchPainting.builder()
@@ -93,6 +100,12 @@ class PaintingServiceImplTest {
             .isSale(false)
             .price(0L)
             .tags(tagSet)
+            .build());
+
+    given(ownerHistoryRepository.save(any()))
+        .willReturn(OwnerHistory.builder()
+            .user(user)
+            .painting(painting)
             .build());
 
     //when
